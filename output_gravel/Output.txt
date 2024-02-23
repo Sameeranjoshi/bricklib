@@ -1,0 +1,160 @@
+[u1418973@notch371:single]$ ./cuda 
+d3pt7
+Arr: 0.000276603
+Arr warp: 0.000349317
+Arr scatter: 0.000383119
+Bri: 0.000392817
+Trans: 0.000198769
+d3cond
+Arr: 0.000248279
+Bri: 0.000315648
+Trans: 0.000205517
+[u1418973@notch371:single]$ ./cpu 
+Copy
+Arr: 0.00926076
+To: 0.0353471
+From: 0.034904
+d3pt7
+Arr: 0.0147077
+Bri: 0.207752
+Arr Scatter: 0.0403321
+Trans: 0.0253484
+d3pt27
+Arr: 0.0451028
+Bri: 0.786861
+cond
+Arr: 0.0343794
+Bri: 0.233157
+Trans: 0.0410481
+result match
+
+
+
+###############################################WEAK###################
+
+
+[u1418973@notch371:weak]$ ./cpu
+Pagesize 4096; MPI Size 1 * OpenMP threads 32
+Domain size of 262144 split among
+A total of 1 processes 1x1x1
+d3pt7 MPI decomp
+Arr: 0.0014035
+calc [0.00103075, 0.00103075, 0.00103075] (σ: 0)
+pack [0.000322582, 0.000322582, 0.000322582] (σ: 0)
+  | Pack speed (GB/s): [12.3928, 12.3928, 12.3928] (σ: 0)
+call [7.43672e-06, 7.43672e-06, 7.43672e-06] (σ: 0)
+wait [4.27275e-05, 4.27275e-05, 4.27275e-05] (σ: 0)
+  | MPI size (MB): [3.9977, 3.9977, 3.9977] (σ: 0)
+  | MPI speed (GB/s): [79.6922, 79.6922, 79.6922] (σ: 0)
+perf 0.186779 GStencil/s
+
+Bri: 0.00084888
+calc [0.000810328, 0.000810328, 0.000810328] (σ: 0)
+call [4.72808e-06, 4.72808e-06, 4.72808e-06] (σ: 0)
+wait [3.38238e-05, 3.38238e-05, 3.38238e-05] (σ: 0)
+  | MPI size (MB): [3.9977, 3.9977, 3.9977] (σ: 0)
+  | Opt MPI size (MB): [3.9977, 3.9977, 3.9977] (σ: 0)
+  | MPI speed (GB/s): [103.696, 103.696, 103.696] (σ: 0)
+perf 0.308812 GStencil/s
+Total of 42 parts
+[u1418973@notch371:weak]$ ls
+CMakeFiles  cmake_install.cmake  cpu  cpu-4d  cuda  cuda-mmap  Makefile  onesided
+[u1418973@notch371:weak]$ ./cp
+cpu     cpu-4d  
+[u1418973@notch371:weak]$ ./cpu-4d 
+Pagesize 4096; MPI Size 1 * OpenMP threads 32
+Domain size of 16777216 split among
+A total of 1 processes 1x1x1x1
+d4pt9 MPI decomp
+Arr: 0.0683032
+calc [0.0491219, 0.0491219, 0.0491219] (σ: 0)
+pack [0.017466, 0.017466, 0.017466] (σ: 0)
+  | Pack speed (GB/s): [22.153, 22.153, 22.153] (σ: 0)
+call [3.07354e-05, 3.07354e-05, 3.07354e-05] (σ: 0)
+wait [0.0016846, 0.0016846, 0.0016846] (σ: 0)
+  | MPI size (MB): [386.925, 386.925, 386.925] (σ: 0)
+  | MPI speed (GB/s): [225.568, 225.568, 225.568] (σ: 0)
+perf 0.245629 GStencil/s
+
+Bri: 0.0672754
+calc [0.0652304, 0.0652304, 0.0652304] (σ: 0)
+call [2.33884e-05, 2.33884e-05, 2.33884e-05] (σ: 0)
+wait [0.00202163, 0.00202163, 0.00202163] (σ: 0)
+  | MPI size (MB): [386.925, 386.925, 386.925] (σ: 0)
+  | MPI speed (GB/s): [189.203, 189.203, 189.203] (σ: 0)
+perf 0.249381 GStencil/s
+Total of 312 parts
+[u1418973@notch371:weak]$ 
+
+u1418973@notch371:weak]$ ./cuda
+Pagesize 4096; MPI Size 1 * OpenMP threads 32
+Domain size of 262144 split among
+A total of 1 processes 1x1x1
+d3pt7 MPI decomp
+Arr: 0.000672625
+calc [1.09924e-05, 1.09924e-05, 1.09924e-05] (σ: 0)
+pack [0.000244557, 0.000244557, 0.000244557] (σ: 0)
+move [0.000372905, 0.000372905, 0.000372905] (σ: 0)
+call [5.82591e-06, 5.82591e-06, 5.82591e-06] (σ: 0)
+wait [3.8344e-05, 3.8344e-05, 3.8344e-05] (σ: 0)
+  | MPI size (MB): [3.9977, 3.9977, 3.9977] (σ: 0)
+  | MPI speed (GB/s): [90.5071, 90.5071, 90.5071] (σ: 0)
+perf 0.389733 GStencil/s
+
+Bri: 8.77607e-05
+calc [1.29184e-05, 1.29184e-05, 1.29184e-05] (σ: 0)
+move [5.40755e-05, 5.40755e-05, 5.40755e-05] (σ: 0)
+call [3.75455e-06, 3.75455e-06, 3.75455e-06] (σ: 0)
+wait [1.70122e-05, 1.70122e-05, 1.70122e-05] (σ: 0)
+  | MPI size (MB): [3.9977, 3.9977, 3.9977] (σ: 0)
+  | MPI speed (GB/s): [192.505, 192.505, 192.505] (σ: 0)
+perf 2.98703 GStencil/s
+
+[u1418973@notch371:weak]$ ./onesided 
+Running with pagesize 4096
+MPI Size 1, dims: 1 1 1 
+OpenMP threads 32
+d3pt7 MPI decomp
+Arr: 0.12582
+calc 0.0910861
+pack 0.0315375
+call 8.60465e-05
+wait 0.00311023
+perf 1.06675 GStencil/s
+
+Bri: 0.250609
+calc 0.243376
+call 0.00722475
+wait 8.06955e-06
+perf 0.535567 GStencil/s
+
+############################################STRONG######################
+[u1418973@notch371:strong]$ ./cpu 
+Pagesize 4096; MPI Size 1 * OpenMP threads 32
+Domain size of 512^3 decomposed into 128^3 subdomains
+Total of 64 subdomains, 64 per rank
+Bri: 0.247761 : 0.247761
+calc : [0.24776, 0.24776, 0.24776] (σ: 0)
+call : [1.696e-07, 1.696e-07, 1.696e-07] (σ: 0)
+wait : [1.67848e-07, 1.67848e-07, 1.67848e-07] (σ: 0)
+  | MPI size (MB): [0, 0, 0] (σ: 0)
+  | MPI speed (GB/s): [0, 0, 0] (σ: 0)
+parts 0
+perf 0.541723 GStencil/s
+
+[u1418973@notch371:strong]$ ./cuda
+Pagesize 4096; MPI Size 1 * OpenMP threads 32
+Domain size of 512^3 decomposed into 128^3 subdomains
+Total of 64 subdomains, 64 per rank
+Bri: 0.00227695 : 0.00245103
+calc : [0.00227464, 0.00227464, 0.00227464] (σ: 0)
+pack : [8.6144e-07, 8.6144e-07, 8.6144e-07] (σ: 0)
+  | pack speed (GB/s): [0, 0, 0] (σ: 0)
+call : [3.05409e-07, 3.05409e-07, 3.05409e-07] (σ: 0)
+wait : [2.71623e-07, 2.71623e-07, 2.71623e-07] (σ: 0)
+  | MPI size (MB): [0, 0, 0] (σ: 0)
+  | MPI speed (GB/s): [0, 0, 0] (σ: 0)
+move : [8.704e-07, 8.704e-07, 8.704e-07] (σ: 0)
+perf 58.9462 GStencil/s
+part 0
+
