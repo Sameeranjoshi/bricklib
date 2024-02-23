@@ -33,6 +33,18 @@ For the list of configuration variables, use `cmake -L ..` or `cmake-gui` in the
 This library can be used as either a submodule or be installed and linked to. `examples/external`
 provide an example of linking to this library from an external project.
 
+## Building on CHPC
+
+The SYCL and OPENCL backends are turned off as of now, currently only MPI, CUDA and CPU backends
+are supported for building, check CMakeLists.txt for uncommented parts.
+
+```
+ml gcc/11.2.0 openmpi cuda
+cmake ../ -DCMAKE_INSTALL_PREFIX=<path to install folder>
+make
+make install
+```
+
 ## Using the brick template
 
 The brick template consists of 3 part:

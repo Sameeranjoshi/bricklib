@@ -43,7 +43,7 @@ endif()
 
 find_package(OpenMP REQUIRED)
 find_package(MPI)
-find_package(OpenCL 2.0)
+#find_package(OpenCL 2.0)
 
 option(BRICK_USE_MEMFD "Using memfd instead of shm_open, supported on Linux >= 3.17 with \"CONFIG_MEMFD_CREATE\"" OFF)
 if (BRICK_USE_MEMFD)
@@ -79,7 +79,7 @@ else ()
     set(LIBRT "")
 endif ()
 
-check_cxx_compiler_flag(-fsycl HAS_SYCL)
+#check_cxx_compiler_flag(-fsycl HAS_SYCL)
 
 if (HAS_SYCL)
     # Sycl requires 17
