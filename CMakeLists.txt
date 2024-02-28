@@ -187,25 +187,32 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/brickConfig.cmake"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake")
 
 # install bin directory
+
 set(SOURCES "single" "strong" "weak")
+set(EXES "cpu" "cuda")  # for now only cpu and cuda.
 # for each directory above
 foreach(SRC_DIR IN LISTS SOURCES)
 
     set(BINARY_SOURCE_DIR "${PROJECT_BINARY_DIR}/${SRC_DIR}")
     set(BINARY_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}/${CMAKE_PROJECT_NAME}/${SRC_DIR}")
-    file(GLOB ALL_FILES "${BINARY_SOURCE_DIR}/*")
-    foreach(file_path ${ALL_FILES})
-        # Check if the file is a regular file (not a directory)
-        if(NOT IS_DIRECTORY ${file_path})
-            # Add the file to the list of executable files
-            list(APPEND EXECUTABLE_FILES_FILTERED ${file_path})
-        endif()
+
+    foreach(EXE IN LISTS EXES)
+        install(FILES ${BINARY_SOURCE_DIR}/${EXE}
+                DESTINATION "${BINARY_INSTALL_DIR}"
+                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                            GROUP_EXECUTE GROUP_READ GROUP_WRITE
+                            WORLD_EXECUTE WORLD_READ WORLD_WRITE
+                )
     endforeach()
-    # Install executable files with their respective permissions
-    install(FILES ${EXECUTABLE_FILES_FILTERED}
-            DESTINATION "${BINARY_INSTALL_DIR}"
-            PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-                        GROUP_EXECUTE GROUP_READ GROUP_WRITE
-                        WORLD_EXECUTE WORLD_READ WORLD_WRITE
-            )
 endforeach()
+
+    # file(GLOB ALL_FILES "${BINARY_SOURCE_DIR}/*")
+    # foreach(file_path ${ALL_FILES})
+    #     # Check if the file is a regular file (not a directory)
+    #     if(NOT IS_DIRECTORY ${file_path})
+    #         # Add the file to the list of executable files
+    #         list(APPEND EXECUTABLE_FILES_FILTERED ${file_path})
+    #     endif()
+    # endforeach()
+    # Install executable files with their respective permissions
+    # install(FILES ${EXECUTABLE_FILES_FILTERED}
