@@ -4,17 +4,48 @@
 
 #include "stencils.h"
 #include <iostream>
+#include <fstream>
 #include "bricksetup.h"
 #include "multiarray.h"
 #include "brickcompare.h"
 #include "cpuvfold.h"
+// Function to write the grid contents to a file
+void writeGridToFile(unsigned (*grid)[STRIDEB][STRIDEB]) {
+    // Open a file for writing
+    std::ofstream outfile("grid_contents.txt");
+
+    // Check if the file opened successfully
+    if (!outfile.is_open()) {
+        std::cerr << "Unable to open file for writing." << std::endl;
+        return;
+    }
+
+    // Write the contents of the grid to the file
+    for (int i = 0; i < STRIDEB; ++i) {
+        for (int j = 0; j < STRIDEB; ++j) {
+            outfile << (*grid)[i][j] << " ";
+        }
+        outfile << std::endl; // Move to the next line after printing each row
+    }
+
+    outfile << std::endl; // Separate each STRIDEBxSTRIDEB slice with an empty line
+
+    // Close the file
+    outfile.close();
+
+    std::cout << "Grid contents have been written to 'grid_contents.txt'." << std::endl;
+}
 
 void copy() {
   unsigned *grid_ptr;
 
+  // Why is grid_ptr = 3D and grid=2D? THis seems interesting.
   auto bInfo = init_grid<3>(grid_ptr, {STRIDEB, STRIDEB, STRIDEB});
   auto grid = (unsigned (*)[STRIDEB][STRIDEB]) grid_ptr;
 
+  writeGridToFile(grid);
+  // This part is all about array.
+  // randomArray = allocates space for array and fills with random values.
   bElem *in_ptr = randomArray({STRIDE, STRIDE, STRIDE});
   bElem *out_ptr = zeroArray({STRIDE, STRIDE, STRIDE});
   bElem(*arr_in)[STRIDE][STRIDE] = (bElem (*)[STRIDE][STRIDE]) in_ptr;
@@ -25,16 +56,18 @@ void copy() {
   auto bStorage = BrickStorage::allocate(bInfo.nbricks, bSize);
   Brick<Dim<BDIM>, Dim<VFOLD>> bIn(&bInfo, bStorage, 0);
 
+// no brick used here. only array to array.
   auto arr_func = [&arr_in, &arr_out]() -> void {
     _TILEFOR arr_out[k][j][i] = arr_in[k][j][i];
   };
 
+// reads from array and assigns to brick.
   auto to_func = [&grid, &bIn, &arr_in]() -> void {
     _PARFOR
     for (long tk = 0; tk < STRIDEB; ++tk)
       for (long tj = 0; tj < STRIDEB; ++tj)
         for (long ti = 0; ti < STRIDEB; ++ti) {
-          unsigned b = grid[tk][tj][ti];
+          unsigned b = grid[tk][tj][ti];  // This captures the brick index 
           for (long k = 0; k < TILE; ++k)
             for (long j = 0; j < TILE; ++j)
               for (long i = 0; i < TILE; ++i) {
@@ -43,6 +76,7 @@ void copy() {
         }
   };
 
+// reads from brick and assigns to array.
   auto from_func = [&grid, &bIn, &arr_out]() -> void {
     _PARFOR
     for (long tk = 0; tk < STRIDEB; ++tk)

@@ -78,12 +78,16 @@ BrickInfo<dims> init_grid(unsigned *&grid_ptr, const std::vector<long> &dimlist)
     stride.push_back(size);
     size *= a;
   }
+  // allocate space and fill the grid_ptr reference.
   grid_ptr = (unsigned *) malloc(size * sizeof(unsigned));
+  // if option is specified, use the data from file.
+  // else option is not specified use from towan's synthetic data.
+  // if option given to print/dump data - dump into file.
   for (unsigned pos = 0; pos < size; ++pos)
     grid_ptr[pos] = pos;
 
   BrickInfo<dims> bInfo(size);
-
+  // some bookkeeping data structures, this deals with adjacency list.
   init_iter<dims, dims>(dimlist, stride, bInfo, grid_ptr, grid_ptr, grid_ptr + size, RunningTag());
 
   return bInfo;
