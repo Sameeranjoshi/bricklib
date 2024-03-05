@@ -10,7 +10,10 @@
 #include <typeinfo>
 #include <initializer_list>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
 #include "brick.h"
+#include "grid_functions.h"
 
 struct RunningTag {
 };
@@ -83,8 +86,11 @@ BrickInfo<dims> init_grid(unsigned *&grid_ptr, const std::vector<long> &dimlist)
   // if option is specified, use the data from file.
   // else option is not specified use from towan's synthetic data.
   // if option given to print/dump data - dump into file.
-  for (unsigned pos = 0; pos < size; ++pos)
-    grid_ptr[pos] = pos;
+  fill_data_in_grid_default_way(grid_ptr, size);
+  // print_data_in_grid_default_way(grid_ptr, size, "Printing after Towan");
+  dump_data_from_grid_into_outputfile(grid_ptr, size, "output_grid_data_dmp.txt");
+  fill_data_in_grid_from_inputfile(grid_ptr, size, "output_grid_data_dmp.txt");
+  // print_data_in_grid_default_way(grid_ptr, size, "Printing after my read from file");
 
   BrickInfo<dims> bInfo(size);
   // some bookkeeping data structures, this deals with adjacency list.
