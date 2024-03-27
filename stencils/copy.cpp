@@ -95,6 +95,9 @@ void copy() {
   int cnt;
   std::cout << "Arr: " << time_func(arr_func) << std::endl;
   std::cout << "To: " << time_func(to_func) << std::endl;
+  
+  printBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, in_ptr, grid_ptr, bIn);
+
   if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, in_ptr, grid_ptr, bIn))
     throw std::runtime_error("result mismatch!");
   std::cout << "From: " << time_func(from_func) << std::endl;
