@@ -12,7 +12,7 @@
 #include "cmpconst.h"
 
 extern bool compareBrick_b;     ///< Thread-private comparison accumulator
-
+#define _PARFOR _Pragma("omp parallel for collapse(2)")
 #pragma omp threadprivate(compareBrick_b)
 
 /**
@@ -77,23 +77,4 @@ compareBrick(const std::vector<long> &dimlist, bElem *arr, unsigned *grid_ptr,
 
   return compareBrick<dims, T>(dimlist, padding, ghost, arr, grid_ptr, brick);
 }
-
-
-template<unsigned dims, typename T>
-inline void
-printBrick(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
-    bElem *arr, unsigned *grid_ptr, T &brick) {
-      std::cout << "Hello";
-}
-template<unsigned dims, typename T>
-inline void
-printBrick(const std::vector<long> &dimlist, bElem *arr, unsigned *grid_ptr,
-             T &brick) {
-  std::vector<long> padding(dimlist.size(), 0);
-  std::vector<long> ghost(dimlist.size(), 0);
-
-  return printBrick<dims, T>(dimlist, padding, ghost, arr, grid_ptr, brick);
-}
-
-
 #endif //BRICK_BRICKCOMPARE_H
