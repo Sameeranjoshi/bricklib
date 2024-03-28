@@ -5,6 +5,7 @@
 #include "stencils.h"
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include "bricksetup.h"
 #include "multiarray.h"
 #include "brickcompare.h"
@@ -126,7 +127,7 @@ void copy() {
         std::cerr << "Unable to open file for writing." << std::endl;
         return;
     }
-
+  int count=0;
 
      _PARFOR
     for (long tk = 0; tk < STRIDEB; ++tk)
@@ -141,15 +142,61 @@ void copy() {
               }
           outfile << "\n";
         }
-
+    std::cout << "number of bricks = %d" << count;
     outfile.close();
 
     std::cout << "\nBrick contents have been written to 'output_brick.txt'\n" << std::endl;
 
   };
 
+
+auto print_brick_to_files = [&grid, &bIn, &arr_out]() -> void {
+    std::cout << "\n Starting to dump bricks into files\n";
+    const std::string folder_name = "individual_bricks"; // Folder name for the output files
+    const std::string file_prefix = "brick_"; // Prefix for file names
+
+    int count = 0;
+
+    // Create the folder if it doesn't exist
+    // std::filesystem::create_directory(folder_name);
+
+    for (long tk = 0; tk < STRIDEB; ++tk) {
+        for (long tj = 0; tj < STRIDEB; ++tj) {
+            for (long ti = 0; ti < STRIDEB; ++ti) {
+                unsigned b = grid[tk][tj][ti];
+                auto file_name = folder_name + "/" + file_prefix + std::to_string(count) + ".txt";
+                std::cout << "file_name" << file_name;
+                std::ofstream outfile(file_name); // File path with folder name
+
+                // Check if the file opened successfully
+                if (!outfile.is_open()) {
+                    std::cerr << "Unable to open file for writing." << std::endl;
+                    return;
+                }
+
+                // Print inside a block/brick
+                for (long k = 0; k < TILE; ++k) {
+                    for (long j = 0; j < TILE; ++j) {
+                        for (long i = 0; i < TILE; ++i) {
+                            outfile << bIn[b][k][j][i] << "\n";
+                        }
+                        // outfile << "\n";
+                    }
+                }
+                outfile.close();
+                ++count;
+            }
+        }
+    }
+
+    std::cout << "Number of bricks = " << count << std::endl;
+    std::cout << "Brick contents have been written to files in the folder '" << folder_name << "'.\n" << std::endl;
+};
+
+
+
   std::cout << "\nPrinting Brick to file\n";
-  print_brick_file();
+  print_brick_to_files();
   
 
   // // SKip comparing bricks for now.

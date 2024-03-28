@@ -7,8 +7,8 @@
 
 #include <omp.h>
 #include "brick.h"
-
-#define N 256
+// Changed this to reduce the problem size else it's too big!
+#define N 8
 #define TILE 8
 
 #define GZ TILE
