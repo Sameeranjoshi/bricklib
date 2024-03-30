@@ -8,7 +8,7 @@ install(TARGETS brick-mpi
         EXPORT brick-targets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
 
-add_library(brickhelper STATIC brickcompare.cpp multiarray.cpp grid_functions.cpp)
+add_library(brickhelper STATIC brickcompare.cpp brickverify.cpp multiarray.cpp grid_functions.cpp)
 install(TARGETS brickhelper
         EXPORT brick-targets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
