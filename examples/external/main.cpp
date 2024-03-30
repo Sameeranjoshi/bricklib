@@ -43,13 +43,23 @@ for (long j = tj; j < tj + TILE; ++j) \
 _Pragma("omp simd") \
 for (long i = ti; i < ti + TILE; ++i)
 
-// Utilities 
+// -- Utilities
 
 struct global_args {
   int write_coeff_into_file;
+  int read_coeff_from_file;
+  int write_grid_with_ghostzone_into_file;
+  int read_grid_with_ghostzone_from_file;
 };
+
 // global declaration allocates space automatically.
 global_args arg_handler;
+
+void debug_global_args(global_args *handler){
+  std::cout << handler->read_coeff_from_file << std::endl;
+  std::cout << handler->write_coeff_into_file << std::endl;
+  std::cout << handler->write_grid_with_ghostzone_into_file << std::endl;
+}
 
 void write_coeff_into_file(bElem *coeff){
     
@@ -67,38 +77,111 @@ void write_coeff_into_file(bElem *coeff){
     for (int i = 0; i < 129; ++i)
         outfile << coeff[i] << std::endl;
     
-    std::cout << "\n Written coefficients.txt \n";
     // Close the file
     outfile.close();
+    std::cout << "\n Written coefficients.txt \n";
+}
+
+void read_coeff_from_file(bElem *coeff) {
+    std::vector<bElem> coefficients;
+
+    // Open the file for reading
+    std::string filename = "coefficients.txt";
+    std::ifstream infile(filename);
+
+    // Check if the file opened successfully
+    if (!infile.is_open()) {
+        std::cerr << "Unable to open file " << filename << " for reading." << std::endl;
+        exit(1);
+    }
+
+    // Read coefficients from the file
+    int i=0;
+    while (infile >> coeff[i]) {
+        i++;
+    }
+
+    // Close the file
+    infile.close();
+
+    std::cout << "\n Read coefficients.txt \n";
+
 }
 
 void handle_coefficient_data(bElem *coeff, global_args *handler){
-
   
   std::random_device r;
   std::mt19937_64 mt(r());
   std::uniform_real_distribution<bElem> u(0, 1);
 
-  // Randomly initialize coefficient, Towan's way of initialization.
-  for (int i = 0; i < 129; ++i)
-    coeff[i] = u(mt);
-
+  // reading
+  if (handler->read_coeff_from_file){
+    read_coeff_from_file(coeff);
+  } else{
+    // Randomly initialize coefficient, Towan's way of initialization.
+    for (int i = 0; i < 129; ++i)
+      coeff[i] = u(mt);
+  }
+  // writing
   if (handler->write_coeff_into_file){
     write_coeff_into_file(coeff);
   }
 
 }
 
+// // Function to write the grid contents to a file
+// void write_grid_with_ghostzone_into_file(unsigned (*grid)[STRIDEB][STRIDEB]) {
+//     // Open a file for writing
+//     std::ofstream outfile("grid_contents.txt");
+//     // Check if the file opened successfully
+//     if (!outfile.is_open()) {
+//         std::cerr << "Unable to open file for writing." << std::endl;
+//         return;
+//     }
+//     // Write the contents of the grid to the file
+//     // Write the contents of the grid to the file
+//     for (int i = 0; i < STRIDEB; ++i) {
+//         for (int j = 0; j < STRIDEB; ++j) {
+//             for (int k = 0; k < STRIDEB; ++k) {
+//                 auto b = grid[i][j][k];
+//                 for (long k1 = 0; k1 < TILE; ++k1) {
+//                     for (long j1 = 0; j1 < TILE; ++j1) {
+//                         for (long i1 = 0; i1 < TILE; ++i1) {            
+//                             outfile << grid[b][k1][j1][i1] << " ";
+//                         }
+//                     }
+//                     outfile << std::endl; // Move to the next line after printing each row
+//                 }
+//             }
+//         }
+//         outfile << std::endl; // Separate each STRIDEBxSTRIDEB slice with an empty line
+//     }
+//     outfile << std::endl; // Separate each STRIDEBxSTRIDEB slice with an empty line
+//     // Close the file
+//     outfile.close();
+//     std::cout << "\n Written grid_contents.txt \n";
+// }
+
 int handle_argument_parsing(int argc, char** argv, global_args *handler) {
     auto generic_error_msg = [&]() {
-        std::cerr << "Usage: " << argv[0] << " <flags>" << std::endl;
-        std::cerr << "flags = --dump-coeff=<true|false>, ..." << std::endl;
+        std::cerr << "Usage: " << argv[0] << " --dump-coeff=<true|false> --dump-grid=<true|false> --read-coeff=<true|false> --read-grid=<true|false>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " --help" << std::endl;
     };
 
-    // Check the number of command-line arguments
-    if (argc != 2) {
+    // Check if argument list has help.
+
+    for (int i=0; i< argc; i++){
+      std::string temparg = argv[i];
+      if (temparg.find("--help") == 0){
         generic_error_msg();
-        return 1;
+        exit(0);
+      }
+    }
+
+    // Check the number of command-line arguments
+    if (argc != 5 || argc == 1) {
+        generic_error_msg();
+        exit(1);
     }
 
     // Parse the command-line argument
@@ -119,6 +202,53 @@ int handle_argument_parsing(int argc, char** argv, global_args *handler) {
         return 1;
     }
 
+    std::string arg2 = argv[2];
+    if (arg2.find("--dump-grid=") == 0) {
+        std::string value = arg2.substr(12); // Skip "--dump-grid="
+        if (value == "true") {
+            handler->write_grid_with_ghostzone_into_file = 1;
+        } else if (value == "false") {
+            handler->write_grid_with_ghostzone_into_file = 0;
+        } else {
+            generic_error_msg();
+            return 1;
+        }
+    } else {
+        generic_error_msg();
+        return 1;
+    }
+
+    std::string arg3 = argv[3];
+    if (arg3.find("--read-coeff=") == 0) {
+        std::string value = arg3.substr(13); // Skip "--read-coeff="
+        if (value == "true") {
+            handler->read_coeff_from_file = 1;
+        } else if (value == "false") {
+            handler->read_coeff_from_file = 0;
+        } else {
+            generic_error_msg();
+            return 1;
+        }
+    } else {
+        generic_error_msg();
+        return 1;
+    }
+
+    std::string arg4 = argv[4];
+    if (arg4.find("--read-grid=") == 0) {
+        std::string value = arg4.substr(12); // Skip "--read-grid="
+        if (value == "true") {
+            handler->read_grid_with_ghostzone_from_file = 1;
+        } else if (value == "false") {
+            handler->read_grid_with_ghostzone_from_file = 0;
+        } else {
+            generic_error_msg();
+            return 1;
+        }
+    } else {
+        generic_error_msg();
+        return 1;
+    }
     return 0;
 }
 
@@ -143,10 +273,10 @@ using std::max;
 
 bElem *coeff;
 
-void d3pt7() {
+void d3pt7(global_args *handler) {
   unsigned *grid_ptr;
 
-  auto bInfo = init_grid<3>(grid_ptr, {STRIDEB, STRIDEB, STRIDEB});
+  auto bInfo = init_grid<3>(grid_ptr, {STRIDEB, STRIDEB, STRIDEB}, handler->read_grid_with_ghostzone_from_file, handler->write_grid_with_ghostzone_into_file);
   auto grid = (unsigned (*)[STRIDEB][STRIDEB]) grid_ptr;
 
   bElem *in_ptr = randomArray({STRIDE, STRIDE, STRIDE});
@@ -168,17 +298,17 @@ void d3pt7() {
                                 coeff[0] * arr_in[k][j][i];
   };
 
-#define bIn(i, j, k) arr_in[k][j][i]
-#define bOut(i, j, k) arr_out[k][j][i]
-  auto arr_tile_func = [&arr_in, &arr_out]() -> void {
-    #pragma omp parallel for
-    for (long tk = GZ; tk < STRIDE - GZ; tk += TILE)
-    for (long tj = GZ; tj < STRIDE - GZ; tj += TILE)
-    for (long ti = GZ; ti < STRIDE - GZ; ti += TILE)
-      tile("7pt.py", "FLEX", (BDIM), ("tk", "tj", "ti"), (1,1,4));
-  };
-#undef bIn
-#undef bOut
+// #define bIn(i, j, k) arr_in[k][j][i]
+// #define bOut(i, j, k) arr_out[k][j][i]
+//   auto arr_tile_func = [&arr_in, &arr_out]() -> void {
+//     #pragma omp parallel for
+//     for (long tk = GZ; tk < STRIDE - GZ; tk += TILE)
+//     for (long tj = GZ; tj < STRIDE - GZ; tj += TILE)
+//     for (long ti = GZ; ti < STRIDE - GZ; ti += TILE)
+//       tile("7pt.py", "FLEX", (BDIM), ("tk", "tj", "ti"), (1,1,4));
+//   };
+// #undef bIn
+// #undef bOut
 
   auto brick_func = [&grid, &bIn, &bOut]() -> void {
     _PARFOR
@@ -197,25 +327,28 @@ void d3pt7() {
         }
   };
 
-  auto brick_func_trans = [&grid, &bIn, &bOut]() -> void {
-    _PARFOR
-    for (long tk = GB; tk < STRIDEB - GB; ++tk)
-      for (long tj = GB; tj < STRIDEB - GB; ++tj)
-        for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-          unsigned b = grid[tk][tj][ti];
-          brick("7pt.py", VSVEC, (BDIM), (VFOLD), b);
-        }
-  };
+  // auto brick_func_trans = [&grid, &bIn, &bOut]() -> void {
+  //   _PARFOR
+  //   for (long tk = GB; tk < STRIDEB - GB; ++tk)
+  //     for (long tj = GB; tj < STRIDEB - GB; ++tj)
+  //       for (long ti = GB; ti < STRIDEB - GB; ++ti) {
+  //         unsigned b = grid[tk][tj][ti];
+  //         brick("7pt.py", VSVEC, (BDIM), (VFOLD), b);
+  //       }
+  // };
 
   std::cout << "d3pt7" << std::endl;
-  std::cout << "Arr: " << time_func(arr_func) << std::endl;
-  std::cout << "Bri: " << time_func(brick_func) << std::endl;
+  arr_func();
+  brick_func();
   if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
     throw std::runtime_error("result mismatch!");
-  std::cout << "Arr Scatter: " << time_func(arr_tile_func) << std::endl;
-  std::cout << "Trans: " << time_func(brick_func_trans) << std::endl;
-  if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
-    throw std::runtime_error("result mismatch!");
+  else
+    std::cout << "Results match(out_ptr, bOut)";
+
+  // std::cout << "Arr Scatter: " << time_func(arr_tile_func) << std::endl;
+  // std::cout << "Trans: " << time_func(brick_func_trans) << std::endl;
+  // if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
+  //   throw std::runtime_error("result mismatch!");
 
   free(in_ptr);
   free(out_ptr);
@@ -230,8 +363,9 @@ int main(int argc, char **argv) {
   // allocate space for coefficients
   coeff = (bElem *) malloc(129 * sizeof(bElem));
   handle_coefficient_data(coeff, &arg_handler);
-
-  // brick1 = d3pt7();  // dumps and runs first
+  // Run once and collect data.
+  d3pt7(&arg_handler);  // dumps and runs first
+  
   // beick2 = d3pt7();  // reads CDC data and runs second time 
   // // compare here.
   // results  = comparenumerically(brick1, brick2);
