@@ -7,6 +7,7 @@
 #include "multiarray.h"
 #include "brickcompare.h"
 #include <string.h>
+#include <utility>
 
 // Setting for X86 with at least AVX2 support
 #include <immintrin.h>
@@ -44,6 +45,10 @@ _Pragma("omp simd") \
 for (long i = ti; i < ti + TILE; ++i)
 
 // -- Utilities
+struct Result {
+    Brick<Dim<BDIM>, Dim<VFOLD>> bOut;
+    unsigned (*grid)[STRIDEB][STRIDEB];
+};
 
 struct global_args {
   int write_coeff_into_file;
@@ -56,9 +61,10 @@ struct global_args {
 global_args arg_handler;
 
 void debug_global_args(global_args *handler){
-  std::cout << handler->read_coeff_from_file << std::endl;
   std::cout << handler->write_coeff_into_file << std::endl;
   std::cout << handler->write_grid_with_ghostzone_into_file << std::endl;
+  std::cout << handler->read_coeff_from_file << std::endl;
+  std::cout << handler->read_grid_with_ghostzone_from_file << std::endl;
 }
 
 void write_coeff_into_file(bElem *coeff){
@@ -273,7 +279,7 @@ using std::max;
 
 bElem *coeff;
 
-void d3pt7(global_args *handler) {
+Result d3pt7(global_args *handler) {
   unsigned *grid_ptr;
 
   auto bInfo = init_grid<3>(grid_ptr, {STRIDEB, STRIDEB, STRIDEB}, handler->read_grid_with_ghostzone_from_file, handler->write_grid_with_ghostzone_into_file);
@@ -291,7 +297,7 @@ void d3pt7(global_args *handler) {
 
   copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr, grid_ptr, bIn);
 
-  auto arr_func = [&arr_in, &arr_out]() -> void {
+auto arr_func = [&arr_in, &arr_out]() -> void {
     _TILEFOR arr_out[k][j][i] = coeff[5] * arr_in[k + 1][j][i] + coeff[6] * arr_in[k - 1][j][i] +
                                 coeff[3] * arr_in[k][j + 1][i] + coeff[4] * arr_in[k][j - 1][i] +
                                 coeff[1] * arr_in[k][j][i + 1] + coeff[2] * arr_in[k][j][i - 1] +
@@ -350,21 +356,58 @@ void d3pt7(global_args *handler) {
   // if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
   //   throw std::runtime_error("result mismatch!");
 
-  free(in_ptr);
-  free(out_ptr);
-  free(grid_ptr);
-  free(bInfo.adj);
+  // free(in_ptr);
+  // free(out_ptr);
+  // if these are freed can lead to UB.
+  // free(grid_ptr);
+  // free(bInfo.adj);
+
+  return {bOut, grid};
 }
 
 int main(int argc, char **argv) {
   // arg_handler is a global struct containing various flags.
   global_args arg_handler = {0};
-  handle_argument_parsing(argc, argv, &arg_handler);
+  // handle_argument_parsing(argc, argv, &arg_handler);
+  arg_handler.write_coeff_into_file = 1;
+  arg_handler.read_coeff_from_file = 0;
+  arg_handler.write_grid_with_ghostzone_into_file = 1;
+  arg_handler.read_grid_with_ghostzone_from_file = 0;
+  
   // allocate space for coefficients
   coeff = (bElem *) malloc(129 * sizeof(bElem));
   handle_coefficient_data(coeff, &arg_handler);
+  
   // Run once and collect data.
-  d3pt7(&arg_handler);  // dumps and runs first
+  Result brick1_output = d3pt7(&arg_handler);  // dumps and runs first
+  
+  // change the parameters
+  arg_handler.write_coeff_into_file = 0;
+  arg_handler.read_coeff_from_file = 1;
+  arg_handler.write_grid_with_ghostzone_into_file = 0;
+  arg_handler.read_grid_with_ghostzone_from_file = 1;
+  
+  Result brick2_output = d3pt7(&arg_handler);
+
+  if (brick1_output.bOut.bInfo == brick2_output.bOut.bInfo){
+    std::cout << "sleep well";
+  } else {
+    std::cout << "Wake up early";
+  }
+  
+
+    // std::string filename="dump.txt";
+    // std::ofstream outfile(filename);
+
+    // for (long tk = GB; tk < STRIDEB - GB; ++tk){
+    //   for (long tj = GB; tj < STRIDEB - GB; ++tj){
+    //     for (long ti = GB; ti < STRIDEB - GB; ++ti) {
+    //       unsigned b = brick1_output.grid[tk][tj][ti];
+    //       outfile << b << " ";
+    //     }
+    //     outfile << std::endl;
+    //   }
+    // }
   
   // beick2 = d3pt7();  // reads CDC data and runs second time 
   // // compare here.
