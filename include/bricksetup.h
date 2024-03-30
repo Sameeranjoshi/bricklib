@@ -99,6 +99,40 @@ BrickInfo<dims> init_grid(unsigned *&grid_ptr, const std::vector<long> &dimlist)
   return bInfo;
 }
 
+// overloaded version 
+template<unsigned dims>
+BrickInfo<dims> init_grid(unsigned *&grid_ptr, const std::vector<long> &dimlist, int read_from_file, int write_into_file) {
+  long size = 1;
+  std::vector<long> stride;
+  for (const auto a: dimlist) {
+    stride.push_back(size);
+    size *= a;
+  }
+  // allocate space and fill the grid_ptr reference.
+  grid_ptr = (unsigned *) malloc(size * sizeof(unsigned));
+
+  // changes
+  if (read_from_file){
+    fill_data_in_grid_from_inputfile(grid_ptr, size, "grid_contents.txt");
+  } else{
+    // towan's synthetic data.
+    fill_data_in_grid_default_way(grid_ptr, size);
+  }
+  if (write_into_file){
+    dump_data_from_grid_into_outputfile(grid_ptr, size, "grid_contents.txt");
+  }
+
+  // print_data_in_grid_default_way(grid_ptr, size, "Printing after Towan");
+  // dump_data_from_grid_into_outputfile(grid_ptr, size, "output_grid_data_dmp.txt");
+  // print_data_in_grid_default_way(grid_ptr, size, "Printing after my read from file");
+
+  BrickInfo<dims> bInfo(size);
+  // some bookkeeping data structures, this deals with adjacency list.
+  init_iter<dims, dims>(dimlist, stride, bInfo, grid_ptr, grid_ptr, grid_ptr + size, RunningTag());
+
+  return bInfo;
+}
+
 template<unsigned dims, unsigned d, typename F, typename A>
 inline void fill(const std::vector<long> &tile, const std::vector<long> &stride, bElem *arr, A a, F f, RunningTag t) {
   for (long s = 0; s < tile[d - 1]; ++s)

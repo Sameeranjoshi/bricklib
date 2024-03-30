@@ -19,10 +19,10 @@ void fill_data_in_grid_from_inputfile(unsigned *&grid_ptr, long sizeofgrid, cons
     for (unsigned pos = 0; pos < sizeofgrid; ++pos) {
       if (!(infile >> grid_ptr[pos])) {
           std::cerr << "Error reading data from file." << std::endl;
-          break;
+         exit(1);
       }
     }
-
+    std::cout << "\nRead grid_contents.txt";
     infile.close();
 }
 
