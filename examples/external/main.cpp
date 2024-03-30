@@ -6,6 +6,7 @@
 #include "bricksetup.h"
 #include "multiarray.h"
 #include "brickcompare.h"
+#include "brickverify.h"
 #include <string.h>
 #include <utility>
 
@@ -346,15 +347,24 @@ auto arr_func = [&arr_in, &arr_out]() -> void {
   std::cout << "d3pt7" << std::endl;
   arr_func();
   brick_func();
-  if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
-    throw std::runtime_error("result mismatch!");
-  else
-    std::cout << "Results match(out_ptr, bOut)";
 
-  // std::cout << "Arr Scatter: " << time_func(arr_tile_func) << std::endl;
-  // std::cout << "Trans: " << time_func(brick_func_trans) << std::endl;
   // if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
   //   throw std::runtime_error("result mismatch!");
+  // else
+  //   std::cout << "Results match(out_ptr, bOut)";
+
+  //   
+  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bIn, grid_ptr, bOut))
+    throw std::runtime_error("\nresult mismatch!");
+  else
+    std::cout << "\nResults match(out_ptr, bOut)";
+
+  // // another way of verification no ghost zone used nor padding.
+  // if (!verifyBrick<3>({N, N, N}, out_ptr, grid_ptr, bOut, grid_ptr, bOut))
+  //   throw std::runtime_error("\n(no ghost verification)result mismatch!");
+  // else
+  //   std::cout << "\n(no ghost verification)Results match(out_ptr, bOut)";
+
 
   // free(in_ptr);
   // free(out_ptr);
@@ -388,12 +398,6 @@ int main(int argc, char **argv) {
   arg_handler.read_grid_with_ghostzone_from_file = 1;
   
   Result brick2_output = d3pt7(&arg_handler);
-
-  if (brick1_output.bOut.bInfo == brick2_output.bOut.bInfo){
-    std::cout << "sleep well";
-  } else {
-    std::cout << "Wake up early";
-  }
   
 
     // std::string filename="dump.txt";
