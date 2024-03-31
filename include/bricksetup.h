@@ -173,6 +173,23 @@ inline void iter(const std::vector<long> &dimlist, const std::vector<long> &tile
 }
 
 // ----------
+
+
+template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
+inline void fill_verify_function(const std::vector<long> &tile, const std::vector<long> &strideA, B1 &brickelem1 /*bElem *arr*/, B2 &brickelem2, F f){ // , StopTag t) {
+  f(brickelem1, brickelem2);
+}
+
+template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
+inline void fill_verify(const std::vector<long> &tile, const std::vector<long> &strideA, const std::vector<long> &strideB, 
+        bElem *arr, B1 &brickelem1, B2 &brickelem2, F f, RunningTag t) {
+  for (long s = 0; s < tile[d - 1]; ++s){
+    // fill<dims, d - 1>(tile, strideA, arr + s * strideA[d - 1], a[s], f, TagSelect<d - 1>::value);
+    fill_verify_function<dims, d - 1>(tile, strideA, /*arr + s * strideA[d - 1],*/ brickelem1[s], brickelem2[s], f); // , TagSelect<d - 1>::value); 
+  }
+}
+
+
 template<unsigned dims, unsigned d /*2nd Dims*/, typename T1, typename T2, typename F>
 inline void iter_verify(const std::vector<long> &dimlist, const std::vector<long> &tile,
                  const std::vector<long> &strideA, const std::vector<long> &strideB,
@@ -201,7 +218,7 @@ inline void iter_verify(const std::vector<long> &dimlist, const std::vector<long
                  const std::vector<long> &padding, const std::vector<long> &ghost,
                  T1 &brick1, bElem *arr, unsigned *grid_ptr1, T2 &brick2, unsigned *grid_ptr2, F f, StopTag t) {   
       std::cout << "\n Reached too tooo tooo deep almost there!";
-  // fill<dims, dims>(tile, strideA, arr, brick[*grid_ptr], f, RunningTag());
+  fill_verify<dims, dims>(tile, strideA, strideB, arr, brick1[*grid_ptr1], brick2[*grid_ptr2], f, RunningTag());
 }
 
 // ---------------
