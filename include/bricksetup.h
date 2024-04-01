@@ -175,17 +175,24 @@ inline void iter(const std::vector<long> &dimlist, const std::vector<long> &tile
 // ----------
 
 
-template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
-inline void fill_verify_function(const std::vector<long> &tile, const std::vector<long> &strideA, B1 &brickelem1 /*bElem *arr*/, B2 &brickelem2, F f){ // , StopTag t) {
-  f(brickelem1, brickelem2);
-}
+// // template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
+// // inline void fill_verify(const std::vector<long> &tile, const std::vector<long> &strideA, B1 &brickelem1 /*bElem *arr*/, B2 &brickelem2, F f){ // , StopTag t) {
+// template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
+// inline void fill_verify(const std::vector<long> &tile, const std::vector<long> &strideA, const std::vector<long> &strideB, 
+//         bElem *arr, B1 &brickelem1, B2 &brickelem2, F f, RunningTag t) {
+
+//   //f(brickelem1, brickelem2);
+// }
 
 template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
 inline void fill_verify(const std::vector<long> &tile, const std::vector<long> &strideA, const std::vector<long> &strideB, 
-        bElem *arr, B1 &brickelem1, B2 &brickelem2, F f, RunningTag t) {
+        bElem *arr, B1 brickelem1, B2 brickelem2, F f, RunningTag t) {
   for (long s = 0; s < tile[d - 1]; ++s){
+    
+    std::cout << "brickelem1[" << s << "]: " ;
     // fill<dims, d - 1>(tile, strideA, arr + s * strideA[d - 1], a[s], f, TagSelect<d - 1>::value);
-    fill_verify_function<dims, d - 1>(tile, strideA, /*arr + s * strideA[d - 1],*/ brickelem1[s], brickelem2[s], f); // , TagSelect<d - 1>::value); 
+           
+    // fill_verify<dims, d - 1>(tile, strideA, arr + s * strideA[d - 1], arr, brickelem1[s], brickelem2[s], f, TagSelect<d - 1>::value); 
   }
 }
 
@@ -221,6 +228,37 @@ inline void iter_verify(const std::vector<long> &dimlist, const std::vector<long
   fill_verify<dims, dims>(tile, strideA, strideB, arr, brick1[*grid_ptr1], brick2[*grid_ptr2], f, RunningTag());
 }
 
+
+/*
+ * Iterate elements side by side in brick1 and brick2.
+ *
+ * dimlist: the internal regions, iterated
+ * padding: the padding necessary for arrays, skipped
+ * ghost: the padding for both, skipped
+ * f: F (&bElem, *bElem) -> void
+ */
+template<unsigned dims, typename T1, typename T2, typename F, unsigned ... BDims>
+inline void
+iter_grid_verify(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
+          bElem *arr, unsigned *grid_ptr1, Brick<Dim<BDims...>, T1> &brick1, unsigned *grid_ptr2, Brick<Dim<BDims...>, T2> &brick2, F f) {
+  std::vector<long> strideA;
+  std::vector<long> strideB;
+  std::vector<long> tile = {BDims...};
+  // Arrays are contiguous first
+  std::reverse(tile.begin(), tile.end());
+
+  long sizeA = 1;
+  long sizeB = 1;
+  for (long a = 0; a < dimlist.size(); ++a) {
+    strideA.push_back(sizeA);
+    strideB.push_back(sizeB);
+    sizeA *= (dimlist[a] + 2 * (padding[a] + ghost[a]));
+    sizeB *= ((dimlist[a] + 2 * ghost[a]) / tile[a]);
+  }
+  
+  iter_verify<dims, dims>(dimlist, tile, strideA, strideB, padding, ghost, brick1, arr, grid_ptr1, brick2, grid_ptr2, f, RunningTag());
+}
+
 // ---------------
 /*
  * Iterate elements side by side in brick and arrays.
@@ -252,36 +290,6 @@ iter_grid(const std::vector<long> &dimlist, const std::vector<long> &padding, co
   iter<dims, dims>(dimlist, tile, strideA, strideB, padding, ghost, brick, arr, grid_ptr, f, RunningTag());
 }
 
-
-/*
- * Iterate elements side by side in brick1 and brick2.
- *
- * dimlist: the internal regions, iterated
- * padding: the padding necessary for arrays, skipped
- * ghost: the padding for both, skipped
- * f: F (&bElem, *bElem) -> void
- */
-template<unsigned dims, typename T1, typename T2, typename F, unsigned ... BDims>
-inline void
-iter_grid_verify(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
-          bElem *arr, unsigned *grid_ptr1, Brick<Dim<BDims...>, T1> &brick1, unsigned *grid_ptr2, Brick<Dim<BDims...>, T2> &brick2, F f) {
-  std::vector<long> strideA;
-  std::vector<long> strideB;
-  std::vector<long> tile = {BDims...};
-  // Arrays are contiguous first
-  std::reverse(tile.begin(), tile.end());
-
-  long sizeA = 1;
-  long sizeB = 1;
-  for (long a = 0; a < dimlist.size(); ++a) {
-    strideA.push_back(sizeA);
-    strideB.push_back(sizeB);
-    sizeA *= (dimlist[a] + 2 * (padding[a] + ghost[a]));
-    sizeB *= ((dimlist[a] + 2 * ghost[a]) / tile[a]);
-  }
-  
-  iter_verify<dims, dims>(dimlist, tile, strideA, strideB, padding, ghost, brick1, arr, grid_ptr1, brick2, grid_ptr2, f, RunningTag());
-}
 
 /**
  * @brief Copy values from an array to bricks
