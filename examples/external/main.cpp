@@ -48,7 +48,7 @@ for (long i = ti; i < ti + TILE; ++i)
 // -- Utilities
 struct Result {
     Brick<Dim<BDIM>, Dim<VFOLD>> bOut;
-    unsigned (*grid)[STRIDEB][STRIDEB];
+    unsigned *grid_ptr;
 };
 
 struct global_args {
@@ -348,19 +348,15 @@ auto arr_func = [&arr_in, &arr_out]() -> void {
   arr_func();
   brick_func();
 
-  // if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
-  //   throw std::runtime_error("result mismatch!");
-  // else
-  //   std::cout << "Results match(out_ptr, bOut)";
-
-  //   
-  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bIn, grid_ptr, bOut))
-    throw std::runtime_error("\nresult mismatch!");
+  if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
+    throw std::runtime_error("Compare result mismatch!");
   else
-    std::cout << "\nResults match(out_ptr, bOut)";
+    std::cout << "Compare Results match(out_ptr, bOut)";
 
-  // // another way of verification no ghost zone used nor padding.
+
+  // // // another way of verification no ghost zone used nor padding.
   // if (!verifyBrick<3>({N, N, N}, out_ptr, grid_ptr, bOut, grid_ptr, bOut))
+
   //   throw std::runtime_error("\n(no ghost verification)result mismatch!");
   // else
   //   std::cout << "\n(no ghost verification)Results match(out_ptr, bOut)";
@@ -372,22 +368,21 @@ auto arr_func = [&arr_in, &arr_out]() -> void {
   // free(grid_ptr);
   // free(bInfo.adj);
 
-  return {bOut, grid};
+  return {bOut, grid_ptr};
 }
 
 int main(int argc, char **argv) {
   // arg_handler is a global struct containing various flags.
   global_args arg_handler = {0};
+  // allocate space for coefficients
+  coeff = (bElem *) malloc(129 * sizeof(bElem));
+  handle_coefficient_data(coeff, &arg_handler);
+
   // handle_argument_parsing(argc, argv, &arg_handler);
   arg_handler.write_coeff_into_file = 1;
   arg_handler.read_coeff_from_file = 0;
   arg_handler.write_grid_with_ghostzone_into_file = 1;
-  arg_handler.read_grid_with_ghostzone_from_file = 0;
-  
-  // allocate space for coefficients
-  coeff = (bElem *) malloc(129 * sizeof(bElem));
-  handle_coefficient_data(coeff, &arg_handler);
-  
+  arg_handler.read_grid_with_ghostzone_from_file = 0;  
   // Run once and collect data.
   Result brick1_output = d3pt7(&arg_handler);  // dumps and runs first
   
@@ -399,29 +394,13 @@ int main(int argc, char **argv) {
   
   Result brick2_output = d3pt7(&arg_handler);
   
+  bElem *out_ptr_dummy = zeroArray({STRIDE, STRIDE, STRIDE});
+  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr_dummy, brick1_output.grid_ptr, brick1_output.bOut, brick2_output.grid_ptr, brick2_output.bOut))
+    throw std::runtime_error("\nresult mismatch!");
+  else
+    std::cout << "\nResults match(bout.r1, bOut.r2)";
 
-    // std::string filename="dump.txt";
-    // std::ofstream outfile(filename);
 
-    // for (long tk = GB; tk < STRIDEB - GB; ++tk){
-    //   for (long tj = GB; tj < STRIDEB - GB; ++tj){
-    //     for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-    //       unsigned b = brick1_output.grid[tk][tj][ti];
-    //       outfile << b << " ";
-    //     }
-    //     outfile << std::endl;
-    //   }
-    // }
-  
-  // beick2 = d3pt7();  // reads CDC data and runs second time 
-  // // compare here.
-  // results  = comparenumerically(brick1, brick2);
-  // if (results == true){
-  //     Verified
-  // }
-  // else {
-  //   not correct
-  // }
 
   return 0;
 }

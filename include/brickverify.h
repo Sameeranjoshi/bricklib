@@ -46,7 +46,6 @@ verifyBrick(const std::vector<long> &dimlist, const std::vector<long> &padding, 
   {
     verifyBrick_b = true;
   }
-    std::cout << "Reached stage 1 success";
   iter_grid_verify<dims>(dimlist, padding, ghost, arr, grid_ptr1, brick1, grid_ptr2, brick2, f);
 
 #pragma omp parallel default(none) shared(ret)
