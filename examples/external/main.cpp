@@ -86,7 +86,7 @@ void write_coeff_into_file(bElem *coeff){
     
     // Close the file
     outfile.close();
-    std::cout << "\n Written coefficients.txt \n";
+    std::cout << "\n Written " << filename;
 }
 
 void read_coeff_from_file(bElem *coeff) {
@@ -111,7 +111,7 @@ void read_coeff_from_file(bElem *coeff) {
     // Close the file
     infile.close();
 
-    std::cout << "\n Read coefficients.txt \n";
+    std::cout << "\n Read " << filename;
 
 }
 
@@ -280,8 +280,8 @@ using std::max;
 
 bElem *coeff;
 
-Result d3pt7(global_args *handler) {
-  unsigned *grid_ptr;
+Result d3pt7(global_args *handler, unsigned *grid_ptr) {
+  // unsigned *grid_ptr;
 
   auto bInfo = init_grid<3>(grid_ptr, {STRIDEB, STRIDEB, STRIDEB}, handler->read_grid_with_ghostzone_from_file, handler->write_grid_with_ghostzone_into_file);
   auto grid = (unsigned (*)[STRIDEB][STRIDEB]) grid_ptr;
@@ -296,14 +296,14 @@ Result d3pt7(global_args *handler) {
   Brick<Dim<BDIM>, Dim<VFOLD>> bIn(&bInfo, bStorage, 0);
   Brick<Dim<BDIM>, Dim<VFOLD>> bOut(&bInfo, bStorage, bSize);
 
-  copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr, grid_ptr, bIn);
+  // copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr, grid_ptr, bIn);
 
-auto arr_func = [&arr_in, &arr_out]() -> void {
-    _TILEFOR arr_out[k][j][i] = coeff[5] * arr_in[k + 1][j][i] + coeff[6] * arr_in[k - 1][j][i] +
-                                coeff[3] * arr_in[k][j + 1][i] + coeff[4] * arr_in[k][j - 1][i] +
-                                coeff[1] * arr_in[k][j][i + 1] + coeff[2] * arr_in[k][j][i - 1] +
-                                coeff[0] * arr_in[k][j][i];
-  };
+// auto arr_func = [&arr_in, &arr_out]() -> void {
+//     _TILEFOR arr_out[k][j][i] = coeff[5] * arr_in[k + 1][j][i] + coeff[6] * arr_in[k - 1][j][i] +
+//                                 coeff[3] * arr_in[k][j + 1][i] + coeff[4] * arr_in[k][j - 1][i] +
+//                                 coeff[1] * arr_in[k][j][i + 1] + coeff[2] * arr_in[k][j][i - 1] +
+//                                 coeff[0] * arr_in[k][j][i];
+//   };
 
 // #define bIn(i, j, k) arr_in[k][j][i]
 // #define bOut(i, j, k) arr_out[k][j][i]
@@ -344,22 +344,14 @@ auto arr_func = [&arr_in, &arr_out]() -> void {
   //       }
   // };
 
-  std::cout << "d3pt7" << std::endl;
-  arr_func();
+  std::cout << "\n Running - d3pt7" << std::endl;
+  // arr_func();
   brick_func();
 
   if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
-    throw std::runtime_error("Compare result mismatch!");
+    throw std::runtime_error("\nCompare result mismatch(out_ptr, bOut)(array, brick)!\n");
   else
-    std::cout << "Compare Results match(out_ptr, bOut)";
-
-
-  // // // another way of verification no ghost zone used nor padding.
-  // if (!verifyBrick<3>({N, N, N}, out_ptr, grid_ptr, bOut, grid_ptr, bOut))
-
-  //   throw std::runtime_error("\n(no ghost verification)result mismatch!");
-  // else
-  //   std::cout << "\n(no ghost verification)Results match(out_ptr, bOut)";
+    std::cout << "\n Compare Results match(out_ptr, bOut)(array, brick)\n";
 
 
   // free(in_ptr);
@@ -376,29 +368,43 @@ int main(int argc, char **argv) {
   global_args arg_handler = {0};
   // allocate space for coefficients
   coeff = (bElem *) malloc(129 * sizeof(bElem));
-  handle_coefficient_data(coeff, &arg_handler);
+  
 
   // handle_argument_parsing(argc, argv, &arg_handler);
   arg_handler.write_coeff_into_file = 1;
   arg_handler.read_coeff_from_file = 0;
   arg_handler.write_grid_with_ghostzone_into_file = 1;
   arg_handler.read_grid_with_ghostzone_from_file = 0;  
+  // handle coefficients
+  handle_coefficient_data(coeff, &arg_handler);
   // Run once and collect data.
-  Result brick1_output = d3pt7(&arg_handler);  // dumps and runs first
+  unsigned *grid_ptr1;
+  Result brick1_output = d3pt7(&arg_handler, grid_ptr1);  // dumps and runs first
   
+  std::cout << "\n CDC Brick";
   // change the parameters
   arg_handler.write_coeff_into_file = 0;
   arg_handler.read_coeff_from_file = 1;
   arg_handler.write_grid_with_ghostzone_into_file = 0;
   arg_handler.read_grid_with_ghostzone_from_file = 1;
+  handle_coefficient_data(coeff, &arg_handler);
+  unsigned *grid_ptr2;
+  Result brick2_output = d3pt7(&arg_handler, grid_ptr2);
   
-  Result brick2_output = d3pt7(&arg_handler);
-  
-  bElem *out_ptr_dummy = zeroArray({STRIDE, STRIDE, STRIDE});
-  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr_dummy, brick1_output.grid_ptr, brick1_output.bOut, brick2_output.grid_ptr, brick2_output.bOut))
-    throw std::runtime_error("\nresult mismatch!");
+  // auto grid1 = (unsigned (*)[STRIDEB][STRIDEB])(grid_ptr1);
+
+    // for (int i = 0; i < STRIDEB; ++i){
+    //     for (int j = 0; j < STRIDEB; ++j){
+    //             auto b = grid1[i][j];
+    //             std::cout << *b << " ";
+    //         }
+    //         std::cout << "\n";
+    // }
+  // bElem *out_ptr_dummy = zeroArray({STRIDE, STRIDE, STRIDE});
+  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, brick1_output.grid_ptr, brick1_output.bOut, brick2_output.grid_ptr, brick2_output.bOut))
+    throw std::runtime_error("\nVerification result mismatch!");
   else
-    std::cout << "\nResults match(bout.r1, bOut.r2)";
+    std::cout << "\nVerification results match(bout1, bOut2)";
 
 
 

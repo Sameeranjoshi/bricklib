@@ -22,7 +22,7 @@ void fill_data_in_grid_from_inputfile(unsigned *&grid_ptr, long sizeofgrid, cons
          exit(1);
       }
     }
-    std::cout << "\nRead grid_contents.txt";
+    std::cout << "\n Read " << filename; 
     infile.close();
 }
 
@@ -39,6 +39,7 @@ void dump_data_from_grid_into_outputfile(unsigned *&grid_ptr, long sizeofgrid, c
     outfile << std::endl;
   }
   // close the file handle.
+  std::cout << "\n Written " << filename; 
   outfile.close();
 }
 
