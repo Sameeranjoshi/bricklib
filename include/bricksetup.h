@@ -266,7 +266,25 @@ inline void copyFromBrick(const std::vector<long> &dimlist, const std::vector<lo
 }
 
 // ----------
+// template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
+// inline void fill_verify_bug(const std::vector<long> &tile, const std::vector<long> &strideA, const std::vector<long> &strideB, 
+//         B1 &brickelem1, B2 &brickelem2 , F f){ //  StopTag t) {
+//           std::cout << "\n First";
+//   f(brickelem1, brickelem2);
+// }
 
+template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
+inline void fill_verify_bug(const std::vector<long> &tile, const std::vector<long> &strideA, const std::vector<long> &strideB, 
+        B1 &brickelem1, B2 &brickelem2 , F f, StopTag t) {
+        std::cout << "\n Second stop";
+  // f(brickelem1, brickelem2);
+}
+template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
+inline void fill_verify_bug(const std::vector<long> &tile, const std::vector<long> &strideA, const std::vector<long> &strideB, 
+        B1 &brickelem1, B2 &brickelem2 , F f,  RunningTag t) {
+        std::cout << "\n Second running";
+  // f(brickelem1, brickelem2);
+}
 
 template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
 inline void fill_verify(const std::vector<long> &tile, const std::vector<long> &strideA, const std::vector<long> &strideB, 
@@ -276,11 +294,13 @@ inline void fill_verify(const std::vector<long> &tile, const std::vector<long> &
     fill_verify<dims, d - 1>(tile, strideA, strideB, brickelem1[s], brickelem2[s], f, TagSelect<d - 1>::value); 
 }
 
-template<unsigned dims, unsigned d, typename F, typename B1, typename B2>
+template<unsigned dims, unsigned d, typename F> // , typename B1, typename B2>
 inline void fill_verify(const std::vector<long> &tile, const std::vector<long> &strideA, const std::vector<long> &strideB, 
-        B1 &brickelem1, B2 &brickelem2 , F f, StopTag t) {
-  f(brickelem1, brickelem2);
+        bElem &brickelem1, bElem &brickelem2, F f, StopTag t) {
+        std::cout << "\n Second running";
 }
+
+
 
 template<unsigned dims, unsigned d /*2nd Dims*/, typename T1, typename T2, typename F>
 inline void iter_verify(const std::vector<long> &dimlist, const std::vector<long> &tile,
@@ -294,7 +314,6 @@ inline void iter_verify(const std::vector<long> &dimlist, const std::vector<long
     for (long s = ghost[dimp] / tile[dimp]; s < (dimlist[dimp] + ghost[dimp]) / tile[dimp]; ++s)
       iter_verify<dims, d - 1>(dimlist, tile, strideA, strideB, padding, ghost, brick1,
                         grid_ptr1 + s * strideA[dimp], brick2,  grid_ptr2 + s * strideB[dimp],  f, TagSelect<dimp>::value);
-
   } else {
     for (long s = ghost[dimp] / tile[dimp]; s < (dimlist[dimp] + ghost[dimp]) / tile[dimp]; ++s)
       iter_verify<dims, d - 1>(dimlist, tile, strideA, strideB, padding, ghost, brick1,  // Any Brick should be OK here I guess as shapes same, not tested yet?
