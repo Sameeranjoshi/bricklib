@@ -393,19 +393,19 @@ void d3pt7() {
               }
         }
   };
-// auto brick_func_trans = [&grid, &bIn, &bOut]() -> void {
-  //   _PARFOR
-  //   for (long tk = GB; tk < STRIDEB - GB; ++tk)
-  //     for (long tj = GB; tj < STRIDEB - GB; ++tj)
-  //       for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-  //         unsigned b = grid[tk][tj][ti];
-  //         brick("7pt.py", VSVEC, (BDIM), (VFOLD), b);
-  //       }
-  // };
+  // auto brick_func_trans2 = [&grid2, &bIn2, &bOut2]() -> void {
+  //     _PARFOR
+  //     for (long tk = GB; tk < STRIDEB - GB; ++tk)
+  //       for (long tj = GB; tj < STRIDEB - GB; ++tj)
+  //         for (long ti = GB; ti < STRIDEB - GB; ++ti) {
+  //           unsigned b = grid2[tk][tj][ti];
+  //           brick("7pt.py", VSVEC, (BDIM), (VFOLD), b);
+  //         }
+  //   };
 
   std::cout << "\n Running - d3pt7 CDC version" << std::endl;
   brick_func2();
-
+  // brick_func_trans2();
 
 // #######################################
 
@@ -421,3 +421,7 @@ int main(int argc, char **argv) {
   return 0;
 }
 
+
+// TODO:
+// 1. printBrick -> copytoBrick same function create one.
+// 2. writeBrick -> copytoBrick same as this function.
