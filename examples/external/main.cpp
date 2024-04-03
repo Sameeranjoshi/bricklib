@@ -55,7 +55,7 @@ for (long i = ti; i < ti + TILE; ++i)
 struct Result {
     Brick<Dim<BDIM>, Dim<VFOLD>> *bOut;
     unsigned *grid_ptr;
-    Brick<Dim<BDIM>, Dim<VFOLD>> &bIn;
+    Brick<Dim<BDIM>, Dim<VFOLD>> *bIn;
 };
 
 struct global_args {
@@ -393,8 +393,8 @@ void d3pt7(global_args *handler, Result *result) {
     // Assign values to the members of the result struct
     result->bOut =  &bOut; // Assuming bOut is defined in the function
     result->grid_ptr = (unsigned *)grid_ptr;
-    result->bIn = bIn; // Assuming in_ptr is defined in the function
-
+    result->bIn = &bIn; // Assuming in_ptr is defined in the function
+    
 }
 
 int main(int argc, char **argv) {
@@ -417,41 +417,41 @@ int main(int argc, char **argv) {
   d3pt7(&arg_handler, brick1_output); //, grid_ptr1);  // dumps and runs first
   
 
-    std::ofstream outfile("dump.txt");
-    auto grid = (unsigned (*)[STRIDEB][STRIDEB]) brick1_output->grid_ptr;
-    for (long tk = GB; tk < STRIDEB - GB; ++tk)
-      for (long tj = GB; tj < STRIDEB - GB; ++tj){
-        for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-                unsigned b = grid[tk][tj][ti];
-                // Print inside a block/brick
-                for (long k = 0; k < TILE; ++k) {
-                    for (long j = 0; j < TILE; ++j) {
-                        for (long i = 0; i < TILE; ++i) {
-                             outfile<< brick1_output->bIn[b][k][j][i] << " ";
-                        }
-                    }
-                }
-                outfile << std::endl;
-              }
+  std::ofstream outfile("dump.txt");
+    // auto grid = (unsigned (*)[STRIDEB][STRIDEB]) brick1_output->grid_ptr;
+    // for (long tk = GB; tk < STRIDEB - GB; ++tk)
+    //   for (long tj = GB; tj < STRIDEB - GB; ++tj){
+    //     for (long ti = GB; ti < STRIDEB - GB; ++ti) {
+    //             unsigned b = grid[tk][tj][ti];
+    //             // Print inside a block/brick
+    //             for (long k = 0; k < TILE; ++k) {
+    //                 for (long j = 0; j < TILE; ++j) {
+    //                     for (long i = 0; i < TILE; ++i) {
+    //                          outfile<< brick1_output->bIn[b][k][j][i] << " ";
+    //                     }
+    //                 }
+    //             }
+    //             outfile << std::endl;
+    //           }
               
-          }
+    //       }
 
    
-  // std::cout << "\n CDC Brick";
-  // // change the parameters
-  // arg_handler.write_coeff_into_file = 0;
-  // arg_handler.read_coeff_from_file = 1;
-  // arg_handler.write_grid_with_ghostzone_into_file = 0;
-  // arg_handler.read_grid_with_ghostzone_from_file = 1;
-  // handle_coefficient_data(coeff, &arg_handler);
-  // Result *brick2_output = (Result*)malloc(sizeof(Result));
-  // d3pt7(&arg_handler, brick2_output); // , grid_ptr2);
+  std::cout << "\n CDC Brick";
+  // change the parameters
+  arg_handler.write_coeff_into_file = 0;
+  arg_handler.read_coeff_from_file = 1;
+  arg_handler.write_grid_with_ghostzone_into_file = 0;
+  arg_handler.read_grid_with_ghostzone_from_file = 1;
+  handle_coefficient_data(coeff, &arg_handler);
+  Result *brick2_output = (Result*)malloc(sizeof(Result));
+  d3pt7(&arg_handler, brick2_output); // , grid_ptr2);
   
 
-  // if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, brick1_output->grid_ptr, brick1_output->bIn, brick2_output->grid_ptr, brick2_output->bOut)) 
-  //   throw std::runtime_error("\nVerification result mismatch outside!");
-  // else
-  //   std::cout << "\nVerification results match(bout1, bOut2) outside";
+  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, brick1_output->grid_ptr, *(brick1_output->bIn), brick2_output->grid_ptr, *(brick2_output->bOut))) 
+    throw std::runtime_error("\nVerification result mismatch outside!");
+  else
+    std::cout << "\nVerification results match(bout1, bOut2) outside";
 
 
 
