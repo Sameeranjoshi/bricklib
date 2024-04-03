@@ -35,10 +35,9 @@ verifyBrick(const std::vector<long> &dimlist, const std::vector<long> &padding, 
     unsigned *grid_ptr1, T1 &brick1, unsigned *grid_ptr2, T2 &brick2) {
   bool ret = true;
   auto f = [&ret](bElem brick1, bElem brick2) -> void {
-    std::cout << "\n Nothing just hi";
-    // double diff = std::abs(brick1 - brick2);
-    // bool r = (diff < BRICK_TOLERANCE) || (diff < (std::abs(brick1) + std::abs(brick2)) * BRICK_TOLERANCE);
-    // verifyBrick_b = (verifyBrick_b && r);
+    double diff = std::abs(brick1 - brick2);
+    bool r = (diff < BRICK_TOLERANCE) || (diff < (std::abs(brick1) + std::abs(brick2)) * BRICK_TOLERANCE);
+    verifyBrick_b = (verifyBrick_b && r);
   };
 
 #pragma omp parallel default(none)

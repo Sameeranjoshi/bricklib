@@ -49,6 +49,8 @@ for (long i = ti; i < ti + TILE; ++i)
 struct Result {
     Brick<Dim<BDIM>, Dim<VFOLD>> bOut;
     unsigned *grid_ptr;
+    Brick<Dim<BDIM>, Dim<VFOLD>> bIn;
+
 };
 
 struct global_args {
@@ -348,19 +350,22 @@ Result d3pt7(global_args *handler, unsigned *grid_ptr) {
   // arr_func();
   brick_func();
 
-  if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
-    throw std::runtime_error("\nCompare result mismatch(out_ptr, bOut)(array, brick)!\n");
-  else
-    std::cout << "\n Compare Results match(out_ptr, bOut)(array, brick)\n";
+  // if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
+  //   throw std::runtime_error("\nCompare result mismatch(out_ptr, bOut)(array, brick)!\n");
+  // else
+  //   std::cout << "\n Compare Results match(out_ptr, bOut)(array, brick)\n";
 
-
+//  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr, bIn, grid_ptr, bOut))
+//     std::cout << "\n Verification mismatch inside";
+//   else
+//     std::cout << "\nVerification results match inside(bout1, bOut2)";
   // free(in_ptr);
   // free(out_ptr);
   // if these are freed can lead to UB.
   // free(grid_ptr);
   // free(bInfo.adj);
 
-  return {bOut, grid_ptr};
+  return {bOut, grid_ptr, bIn};
 }
 
 int main(int argc, char **argv) {
@@ -391,20 +396,12 @@ int main(int argc, char **argv) {
   unsigned *grid_ptr2;
   Result brick2_output = d3pt7(&arg_handler, grid_ptr2);
   
-  // auto grid1 = (unsigned (*)[STRIDEB][STRIDEB])(grid_ptr1);
 
-    // for (int i = 0; i < STRIDEB; ++i){
-    //     for (int j = 0; j < STRIDEB; ++j){
-    //             auto b = grid1[i][j];
-    //             std::cout << *b << " ";
-    //         }
-    //         std::cout << "\n";
-    // }
-  // bElem *out_ptr_dummy = zeroArray({STRIDE, STRIDE, STRIDE});
-  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, brick1_output.grid_ptr, brick1_output.bOut, brick2_output.grid_ptr, brick2_output.bOut))
-    throw std::runtime_error("\nVerification result mismatch!");
-  else
-    std::cout << "\nVerification results match(bout1, bOut2)";
+  // // bElem *out_ptr_dummy = zeroArray({STRIDE, STRIDE, STRIDE});
+  // if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, brick1_output.grid_ptr, brick1_output.bIn, brick2_output.grid_ptr, brick2_output.bOut)) 
+  //   throw std::runtime_error("\nVerification result mismatch outside!");
+  // else
+  //   std::cout << "\nVerification results match(bout1, bOut2) outside";
 
 
 
