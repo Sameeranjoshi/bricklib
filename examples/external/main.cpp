@@ -287,42 +287,20 @@ using std::max;
 
 bElem *coeff;
 
-void d3pt7(global_args *handler, Result *result) {
-   unsigned *grid_ptr;
-
+void d3pt7(global_args *handler) {
+  // Bricks
+  unsigned *grid_ptr;
   auto bInfo = init_grid<3>(grid_ptr, {STRIDEB, STRIDEB, STRIDEB}, handler->read_grid_with_ghostzone_from_file, handler->write_grid_with_ghostzone_into_file);
   auto grid = (unsigned (*)[STRIDEB][STRIDEB]) grid_ptr;
-
+  // Array
   bElem *in_ptr = randomArray({STRIDE, STRIDE, STRIDE});
-  bElem *out_ptr = zeroArray({STRIDE, STRIDE, STRIDE});
-  bElem(*arr_in)[STRIDE][STRIDE] = (bElem (*)[STRIDE][STRIDE]) in_ptr;
-  bElem(*arr_out)[STRIDE][STRIDE] = (bElem (*)[STRIDE][STRIDE]) out_ptr;
-
+  // Bricks
   auto bSize = cal_size<BDIM>::value;
   auto bStorage = BrickStorage::allocate(bInfo.nbricks, bSize * 2);
   Brick<Dim<BDIM>, Dim<VFOLD>> bIn(&bInfo, bStorage, 0);
   Brick<Dim<BDIM>, Dim<VFOLD>> bOut(&bInfo, bStorage, bSize);
 
   // copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr, grid_ptr, bIn);
-
-// auto arr_func = [&arr_in, &arr_out]() -> void {
-//     _TILEFOR arr_out[k][j][i] = coeff[5] * arr_in[k + 1][j][i] + coeff[6] * arr_in[k - 1][j][i] +
-//                                 coeff[3] * arr_in[k][j + 1][i] + coeff[4] * arr_in[k][j - 1][i] +
-//                                 coeff[1] * arr_in[k][j][i + 1] + coeff[2] * arr_in[k][j][i - 1] +
-//                                 coeff[0] * arr_in[k][j][i];
-//   };
-
-// #define bIn(i, j, k) arr_in[k][j][i]
-// #define bOut(i, j, k) arr_out[k][j][i]
-//   auto arr_tile_func = [&arr_in, &arr_out]() -> void {
-//     #pragma omp parallel for
-//     for (long tk = GZ; tk < STRIDE - GZ; tk += TILE)
-//     for (long tj = GZ; tj < STRIDE - GZ; tj += TILE)
-//     for (long ti = GZ; ti < STRIDE - GZ; ti += TILE)
-//       tile("7pt.py", "FLEX", (BDIM), ("tk", "tj", "ti"), (1,1,4));
-//   };
-// #undef bIn
-// #undef bOut
 
   auto brick_func = [&grid, &bIn, &bOut]() -> void {
     _PARFOR
@@ -340,8 +318,7 @@ void d3pt7(global_args *handler, Result *result) {
               }
         }
   };
-
-  // auto brick_func_trans = [&grid, &bIn, &bOut]() -> void {
+// auto brick_func_trans = [&grid, &bIn, &bOut]() -> void {
   //   _PARFOR
   //   for (long tk = GB; tk < STRIDEB - GB; ++tk)
   //     for (long tj = GB; tj < STRIDEB - GB; ++tj)
@@ -352,49 +329,29 @@ void d3pt7(global_args *handler, Result *result) {
   // };
 
   std::cout << "\n Running - d3pt7" << std::endl;
-  // arr_func();
   brick_func();
+    // std::ofstream outfile("dump_orig.txt");
+    // for (long tk = GB; tk < STRIDEB - GB; ++tk)
+    //   for (long tj = GB; tj < STRIDEB - GB; ++tj){
+    //     for (long ti = GB; ti < STRIDEB - GB; ++ti) {
+    //             unsigned b = grid[tk][tj][ti];
+    //             // Print inside a block/brick
+    //             for (long k = 0; k < TILE; ++k) {
+    //                 for (long j = 0; j < TILE; ++j) {
+    //                     for (long i = 0; i < TILE; ++i) {
+    //                          outfile<< bIn[b][k][j][i] << " ";
+    //                     }
+    //                 }
+    //             }
+    //             outfile << std::endl;
+    //           }         
+    //       }
 
-
-    std::ofstream outfile("dump_orig.txt");
-    
-    for (long tk = GB; tk < STRIDEB - GB; ++tk)
-      for (long tj = GB; tj < STRIDEB - GB; ++tj){
-        for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-                unsigned b = grid[tk][tj][ti];
-                // Print inside a block/brick
-                for (long k = 0; k < TILE; ++k) {
-                    for (long j = 0; j < TILE; ++j) {
-                        for (long i = 0; i < TILE; ++i) {
-                             outfile<< bIn[b][k][j][i] << " ";
-                        }
-                    }
-                }
-                outfile << std::endl;
-              }
-              
-          }
-
-  // if (!compareBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, out_ptr, grid_ptr, bOut))
-  //   throw std::runtime_error("\nCompare result mismatch(out_ptr, bOut)(array, brick)!\n");
-  // else
-  //   std::cout << "\n Compare Results match(out_ptr, bOut)(array, brick)\n";
 
 //  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr, bIn, grid_ptr, bOut))
 //     std::cout << "\n Verification mismatch inside";
 //   else
-//     std::cout << "\nVerification results match inside(bout1, bOut2)";
-  // free(in_ptr);
-  // free(out_ptr);
-  // if these are freed can lead to UB.
-  // free(grid_ptr);
-  // free(bInfo.adj);
-
-    // Assign values to the members of the result struct
-    result->bOut =  &bOut; // Assuming bOut is defined in the function
-    result->grid_ptr = (unsigned *)grid_ptr;
-    result->bIn = &bIn; // Assuming in_ptr is defined in the function
-    
+//     std::cout << "\nVerification results match inside(bout1, bOut2)";  
 }
 
 int main(int argc, char **argv) {
@@ -412,30 +369,7 @@ int main(int argc, char **argv) {
   // handle coefficients
   handle_coefficient_data(coeff, &arg_handler);
   // Run once and collect data.
-  // unsigned *grid_ptr1;
-  Result *brick1_output = (Result*)malloc(sizeof(Result));
-  d3pt7(&arg_handler, brick1_output); //, grid_ptr1);  // dumps and runs first
-  
-
-  std::ofstream outfile("dump.txt");
-    // auto grid = (unsigned (*)[STRIDEB][STRIDEB]) brick1_output->grid_ptr;
-    // for (long tk = GB; tk < STRIDEB - GB; ++tk)
-    //   for (long tj = GB; tj < STRIDEB - GB; ++tj){
-    //     for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-    //             unsigned b = grid[tk][tj][ti];
-    //             // Print inside a block/brick
-    //             for (long k = 0; k < TILE; ++k) {
-    //                 for (long j = 0; j < TILE; ++j) {
-    //                     for (long i = 0; i < TILE; ++i) {
-    //                          outfile<< brick1_output->bIn[b][k][j][i] << " ";
-    //                     }
-    //                 }
-    //             }
-    //             outfile << std::endl;
-    //           }
-              
-    //       }
-
+  d3pt7(&arg_handler);
    
   std::cout << "\n CDC Brick";
   // change the parameters
@@ -444,16 +378,8 @@ int main(int argc, char **argv) {
   arg_handler.write_grid_with_ghostzone_into_file = 0;
   arg_handler.read_grid_with_ghostzone_from_file = 1;
   handle_coefficient_data(coeff, &arg_handler);
-  Result *brick2_output = (Result*)malloc(sizeof(Result));
-  d3pt7(&arg_handler, brick2_output); // , grid_ptr2);
+  d3pt7(&arg_handler);
   
-
-  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, brick1_output->grid_ptr, *(brick1_output->bIn), brick2_output->grid_ptr, *(brick2_output->bOut))) 
-    throw std::runtime_error("\nVerification result mismatch outside!");
-  else
-    std::cout << "\nVerification results match(bout1, bOut2) outside";
-
-
 
   return 0;
 }
