@@ -66,7 +66,8 @@ struct global_args {
 };
 
 // global declaration allocates space automatically.
-global_args arg_handler;
+global_args arg_handler1;
+global_args arg_handler2;
 
 void debug_global_args(global_args *handler){
   std::cout << handler->write_coeff_into_file << std::endl;
@@ -285,36 +286,56 @@ double time_func(T func) {
 
 using std::max;
 
-bElem *coeff;
+bElem *coeff1;
+bElem *coeff2;
 
-void d3pt7(global_args *handler) {
+void d3pt7() {
+  // arg_handler is a global struct containing various flags.
+  global_args arg_handler1 = {0};
+  global_args arg_handler2 = {0};
+  // allocate space for coefficients
+  coeff1 = (bElem *) malloc(129 * sizeof(bElem));
+  coeff2 = (bElem *) malloc(129 * sizeof(bElem));
+
+// #######################################
+
+  // handle_argument_parsing(argc, argv, &arg_handler);
+  arg_handler1.write_coeff_into_file = 1;
+  arg_handler1.read_coeff_from_file = 0;
+  arg_handler1.write_grid_with_ghostzone_into_file = 1;
+  arg_handler1.read_grid_with_ghostzone_from_file = 0;  
+  // handle coefficients
+  handle_coefficient_data(coeff1, &arg_handler1);
+  // Run once and collect data.
+// ---------------------------------------
+
   // Bricks
-  unsigned *grid_ptr;
-  auto bInfo = init_grid<3>(grid_ptr, {STRIDEB, STRIDEB, STRIDEB}, handler->read_grid_with_ghostzone_from_file, handler->write_grid_with_ghostzone_into_file);
-  auto grid = (unsigned (*)[STRIDEB][STRIDEB]) grid_ptr;
+  unsigned *grid_ptr1;
+  auto bInfo1 = init_grid<3>(grid_ptr1, {STRIDEB, STRIDEB, STRIDEB}, arg_handler1.read_grid_with_ghostzone_from_file, arg_handler1.write_grid_with_ghostzone_into_file);
+  auto grid1 = (unsigned (*)[STRIDEB][STRIDEB]) grid_ptr1;
   // Array
-  bElem *in_ptr = randomArray({STRIDE, STRIDE, STRIDE});
+  bElem *in_ptr1 = randomArray({STRIDE, STRIDE, STRIDE});
   // Bricks
-  auto bSize = cal_size<BDIM>::value;
-  auto bStorage = BrickStorage::allocate(bInfo.nbricks, bSize * 2);
-  Brick<Dim<BDIM>, Dim<VFOLD>> bIn(&bInfo, bStorage, 0);
-  Brick<Dim<BDIM>, Dim<VFOLD>> bOut(&bInfo, bStorage, bSize);
+  auto bSize1 = cal_size<BDIM>::value;
+  auto bStorage1 = BrickStorage::allocate(bInfo1.nbricks, bSize1 * 2);
+  Brick<Dim<BDIM>, Dim<VFOLD>> bIn1(&bInfo1, bStorage1, 0);
+  Brick<Dim<BDIM>, Dim<VFOLD>> bOut1(&bInfo1, bStorage1, bSize1);
 
   // copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr, grid_ptr, bIn);
 
-  auto brick_func = [&grid, &bIn, &bOut]() -> void {
+  auto brick_func1 = [&grid1, &bIn1, &bOut1]() -> void {
     _PARFOR
     for (long tk = GB; tk < STRIDEB - GB; ++tk)
       for (long tj = GB; tj < STRIDEB - GB; ++tj)
         for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-          unsigned b = grid[tk][tj][ti];
+          unsigned b = grid1[tk][tj][ti];
           for (long k = 0; k < TILE; ++k)
             for (long j = 0; j < TILE; ++j)
               for (long i = 0; i < TILE; ++i) {
-                bOut[b][k][j][i] = coeff[5] * bIn[b][k + 1][j][i] + coeff[6] * bIn[b][k - 1][j][i] +
-                                   coeff[3] * bIn[b][k][j + 1][i] + coeff[4] * bIn[b][k][j - 1][i] +
-                                   coeff[1] * bIn[b][k][j][i + 1] + coeff[2] * bIn[b][k][j][i - 1] +
-                                   coeff[0] * bIn[b][k][j][i];
+                bOut1[b][k][j][i] = coeff1[5] * bIn1[b][k + 1][j][i] + coeff1[6] * bIn1[b][k - 1][j][i] +
+                                   coeff1[3] * bIn1[b][k][j + 1][i] + coeff1[4] * bIn1[b][k][j - 1][i] +
+                                   coeff1[1] * bIn1[b][k][j][i + 1] + coeff1[2] * bIn1[b][k][j][i - 1] +
+                                   coeff1[0] * bIn1[b][k][j][i];
               }
         }
   };
@@ -328,58 +349,74 @@ void d3pt7(global_args *handler) {
   //       }
   // };
 
-  std::cout << "\n Running - d3pt7" << std::endl;
-  brick_func();
-    // std::ofstream outfile("dump_orig.txt");
-    // for (long tk = GB; tk < STRIDEB - GB; ++tk)
-    //   for (long tj = GB; tj < STRIDEB - GB; ++tj){
-    //     for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-    //             unsigned b = grid[tk][tj][ti];
-    //             // Print inside a block/brick
-    //             for (long k = 0; k < TILE; ++k) {
-    //                 for (long j = 0; j < TILE; ++j) {
-    //                     for (long i = 0; i < TILE; ++i) {
-    //                          outfile<< bIn[b][k][j][i] << " ";
-    //                     }
-    //                 }
-    //             }
-    //             outfile << std::endl;
-    //           }         
-    //       }
+  std::cout << "\n Running - d3pt7 Original" << std::endl;
+  brick_func1();
+
+// #######################################
+  // handle_argument_parsing(argc, argv, &arg_handler);
+  arg_handler2.write_coeff_into_file = 0;
+  arg_handler2.read_coeff_from_file = 1;
+  arg_handler2.write_grid_with_ghostzone_into_file = 0;
+  arg_handler2.read_grid_with_ghostzone_from_file = 1;  
+  // handle coefficients
+  handle_coefficient_data(coeff2, &arg_handler2);
+  // Run once and collect data.
+// ---------------------------------------
+
+  // Bricks
+  unsigned *grid_ptr2;
+  auto bInfo2 = init_grid<3>(grid_ptr2, {STRIDEB, STRIDEB, STRIDEB}, arg_handler2.read_grid_with_ghostzone_from_file, arg_handler2.write_grid_with_ghostzone_into_file);
+  auto grid2 = (unsigned (*)[STRIDEB][STRIDEB]) grid_ptr2;
+  // Array
+  bElem *in_ptr2 = randomArray({STRIDE, STRIDE, STRIDE});
+  // Bricks
+  auto bSize2 = cal_size<BDIM>::value;
+  auto bStorage2 = BrickStorage::allocate(bInfo2.nbricks, bSize2 * 2);
+  Brick<Dim<BDIM>, Dim<VFOLD>> bIn2(&bInfo2, bStorage2, 0);
+  Brick<Dim<BDIM>, Dim<VFOLD>> bOut2(&bInfo2, bStorage2, bSize2);
+
+  // copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2 , grid_ptr2, bIn2);
+
+  auto brick_func2 = [&grid2, &bIn2, &bOut2]() -> void {
+    _PARFOR
+    for (long tk = GB; tk < STRIDEB - GB; ++tk)
+      for (long tj = GB; tj < STRIDEB - GB; ++tj)
+        for (long ti = GB; ti < STRIDEB - GB; ++ti) {
+          unsigned b = grid2[tk][tj][ti];
+          for (long k = 0; k < TILE; ++k)
+            for (long j = 0; j < TILE; ++j)
+              for (long i = 0; i < TILE; ++i) {
+                bOut2[b][k][j][i] = coeff2[5] * bIn2[b][k + 1][j][i] + coeff2[6] * bIn2[b][k - 1][j][i] +
+                                   coeff2[3] * bIn2[b][k][j + 1][i] + coeff2[4] * bIn2[b][k][j - 1][i] +
+                                   coeff2[1] * bIn2[b][k][j][i + 1] + coeff2[2] * bIn2[b][k][j][i - 1] +
+                                   coeff2[0] * bIn2[b][k][j][i];
+              }
+        }
+  };
+// auto brick_func_trans = [&grid, &bIn, &bOut]() -> void {
+  //   _PARFOR
+  //   for (long tk = GB; tk < STRIDEB - GB; ++tk)
+  //     for (long tj = GB; tj < STRIDEB - GB; ++tj)
+  //       for (long ti = GB; ti < STRIDEB - GB; ++ti) {
+  //         unsigned b = grid[tk][tj][ti];
+  //         brick("7pt.py", VSVEC, (BDIM), (VFOLD), b);
+  //       }
+  // };
+
+  std::cout << "\n Running - d3pt7 CDC version" << std::endl;
+  brick_func2();
 
 
-//  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr, bIn, grid_ptr, bOut))
-//     std::cout << "\n Verification mismatch inside";
-//   else
-//     std::cout << "\nVerification results match inside(bout1, bOut2)";  
+// #######################################
+
+ if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
+    std::cout << "\n Verification mismatch (bOut1, bOut2)\n";
+  else
+    std::cout << "\nVerification results match (bout1, bOut2)\n";  
 }
 
 int main(int argc, char **argv) {
-  // arg_handler is a global struct containing various flags.
-  global_args arg_handler = {0};
-  // allocate space for coefficients
-  coeff = (bElem *) malloc(129 * sizeof(bElem));
-  
-
-  // handle_argument_parsing(argc, argv, &arg_handler);
-  arg_handler.write_coeff_into_file = 1;
-  arg_handler.read_coeff_from_file = 0;
-  arg_handler.write_grid_with_ghostzone_into_file = 1;
-  arg_handler.read_grid_with_ghostzone_from_file = 0;  
-  // handle coefficients
-  handle_coefficient_data(coeff, &arg_handler);
-  // Run once and collect data.
-  d3pt7(&arg_handler);
-   
-  std::cout << "\n CDC Brick";
-  // change the parameters
-  arg_handler.write_coeff_into_file = 0;
-  arg_handler.read_coeff_from_file = 1;
-  arg_handler.write_grid_with_ghostzone_into_file = 0;
-  arg_handler.read_grid_with_ghostzone_from_file = 1;
-  handle_coefficient_data(coeff, &arg_handler);
-  d3pt7(&arg_handler);
-  
+  d3pt7();
 
   return 0;
 }
