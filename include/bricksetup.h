@@ -356,6 +356,66 @@ iter_grid_verify(const std::vector<long> &dimlist, const std::vector<long> &padd
   iter_verify<dims, dims>(dimlist, tile, strideA, strideB, padding, ghost, brick1, grid_ptr1, brick2, grid_ptr2, f, RunningTag());
 }
 
-// ---------------
+template<unsigned dims, typename T>
+inline void
+write_brick_into_file_verify(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
+            bElem *arr, unsigned *grid_ptr, T &brick, std::string &filename) {
+  std::ofstream outfile(filename);
+  auto f = [&](bElem &brick, bElem *arr) -> void {
+    outfile << brick;
+    outfile << std::endl;
+  };
 
+  iter_grid<dims>(dimlist, padding, ghost, arr, grid_ptr, brick, f);
+  outfile.close();
+}
+
+/**
+ * @brief Copy values from an array to bricks without ghost or padding
+ * @tparam dims
+ * @tparam T
+ * @param dimlist
+ * @param arr
+ * @param grid_ptr
+ * @param brick
+ *
+ * For parameters see copyToBrick(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost, bElem *arr, unsigned *grid_ptr, T &brick)
+ */
+template<unsigned dims, typename T>
+inline void write_brick_into_file_verify(const std::vector<long> &dimlist, bElem *arr, unsigned *grid_ptr, T &brick, std::string &filename) {
+  std::vector<long> padding(dimlist.size(), 0);
+  std::vector<long> ghost(dimlist.size(), 0);
+
+  write_brick_into_file_verify<dims>(dimlist, padding, ghost, arr, grid_ptr, brick, filename);
+}
+
+template<unsigned dims, typename T>
+inline void
+read_brick_from_file_verify(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
+            bElem *arr, unsigned *grid_ptr, T &brick, std::string &filename) {
+  std::ifstream infile(filename);
+    if (!infile.is_open()) {
+        std::cerr << "Unable to open file " << filename  << "for reading data from." << std::endl;
+        return;
+    }  
+
+  auto f = [&](bElem &brick, bElem *arr) -> void {
+    if (!(infile >> brick)) {
+      std::cerr << "Error reading data from file "<< filename << std::endl;
+      exit(1);
+    }   
+  };
+
+  iter_grid<dims>(dimlist, padding, ghost, arr, grid_ptr, brick, f);
+  infile.close();
+}
+
+
+template<unsigned dims, typename T>
+inline void read_brick_from_file_verify(const std::vector<long> &dimlist, bElem *arr, unsigned *grid_ptr, T &brick, std::string &filename) {
+  std::vector<long> padding(dimlist.size(), 0);
+  std::vector<long> ghost(dimlist.size(), 0);
+
+  read_brick_from_file_verify<dims>(dimlist, padding, ghost, arr, grid_ptr, brick, filename);
+}
 #endif

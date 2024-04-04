@@ -321,7 +321,14 @@ void d3pt7() {
   Brick<Dim<BDIM>, Dim<VFOLD>> bIn1(&bInfo1, bStorage1, 0);
   Brick<Dim<BDIM>, Dim<VFOLD>> bOut1(&bInfo1, bStorage1, bSize1);
 
-  // copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr, grid_ptr, bIn);
+  copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr1, grid_ptr1, bIn1);
+  // Write brick data into file.
+  if (arg_handler1.write_grid_with_ghostzone_into_file){
+    std::string filename = "brick_data_original.txt";
+    write_brick_into_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr1, grid_ptr1, bIn1, filename);
+  } else{
+    std::cout << "\n Skipped writing brick1 data into file";
+  }
 
   auto brick_func1 = [&grid1, &bIn1, &bOut1]() -> void {
     _PARFOR
@@ -351,7 +358,8 @@ void d3pt7() {
 
   std::cout << "\n Running - d3pt7 Original" << std::endl;
   brick_func1();
-
+// #######################################
+//CRUSHER POINT
 // #######################################
   // handle_argument_parsing(argc, argv, &arg_handler);
   arg_handler2.write_coeff_into_file = 0;
@@ -375,8 +383,15 @@ void d3pt7() {
   Brick<Dim<BDIM>, Dim<VFOLD>> bIn2(&bInfo2, bStorage2, 0);
   Brick<Dim<BDIM>, Dim<VFOLD>> bOut2(&bInfo2, bStorage2, bSize2);
 
+  // We don't need to copy into second brick, it should be read from file.
   // copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2 , grid_ptr2, bIn2);
-
+ // Write brick data into file.
+  if (arg_handler2.read_grid_with_ghostzone_from_file){
+    std::string filename = "brick_data_original.txt"; // should be CDC brick at some point.
+    read_brick_from_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2, grid_ptr2, bIn2, filename);
+  } else{
+    std::cout << "\n Skipped reading brick2 data from file";
+  }
   auto brick_func2 = [&grid2, &bIn2, &bOut2]() -> void {
     _PARFOR
     for (long tk = GB; tk < STRIDEB - GB; ++tk)
@@ -418,6 +433,8 @@ void d3pt7() {
     std::cout << "\n Verification mismatch numerical (bOut1, bOut2)\n";
   else
     std::cout << "\nVerification results match numerical (bout1, bOut2)\n";  
+  
+  // print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
 
 }
 
