@@ -410,9 +410,15 @@ void d3pt7() {
 // #######################################
 
  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
-    std::cout << "\n Verification mismatch (bOut1, bOut2)\n";
+    std::cout << "\n Verification mismatch floating pt (bOut1, bOut2)\n";
   else
-    std::cout << "\nVerification results match (bout1, bOut2)\n";  
+    std::cout << "\nVerification results match floating pt (bout1, bOut2)\n";  
+
+ if (!verifyBrick_numerical<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
+    std::cout << "\n Verification mismatch numerical (bOut1, bOut2)\n";
+  else
+    std::cout << "\nVerification results match numerical (bout1, bOut2)\n";  
+
 }
 
 int main(int argc, char **argv) {
