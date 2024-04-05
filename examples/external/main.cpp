@@ -429,18 +429,20 @@ void d3pt7() {
   // brick_func_trans2();
 
 // #######################################
-
+  std::cout << "\n Running - Verification \n";
  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
-    std::cout << "\n Verification mismatch floating pt (bOut1, bOut2)\n";
+    std::cout << "\n Floating point verification mismatched (bOut1, bOut2)\n";
   else
-    std::cout << "\nVerification results match floating pt (bout1, bOut2)\n";  
+    std::cout << "\n Floating point verification matched (bout1, bOut2)\n";  
 
+  // B1 - must be original
+  // B2 - must be CDC
  if (!verifyBrick_numerical<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
-    std::cout << "\n Verification mismatch numerical (bOut1, bOut2)\n";
+    std::cout << "\n Numerical verification mismatched (bOut1, bOut2)\n";
   else
-    std::cout << "\nVerification results match numerical (bout1, bOut2)\n";  
+    std::cout << "\n Numerical vcerification match (bout1, bOut2)\n";  
   
-  print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
+  // print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
 
 }
 
