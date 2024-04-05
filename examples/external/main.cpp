@@ -296,9 +296,6 @@ void d3pt7() {
   // allocate space for coefficients
   coeff1 = (bElem *) malloc(129 * sizeof(bElem));
   coeff2 = (bElem *) malloc(129 * sizeof(bElem));
-
-// #######################################
-
   // handle_argument_parsing(argc, argv, &arg_handler);
   arg_handler1.write_coeff_into_file = 1;
   arg_handler1.read_coeff_from_file = 0;
@@ -306,7 +303,11 @@ void d3pt7() {
   arg_handler1.read_grid_with_ghostzone_from_file = 0;  
   // handle coefficients
   handle_coefficient_data(coeff1, &arg_handler1);
-  // Run once and collect data.
+  // Run once and collect data.  
+
+// #######################################
+
+
 // ---------------------------------------
 
   // Bricks
@@ -321,6 +322,8 @@ void d3pt7() {
   Brick<Dim<BDIM>, Dim<VFOLD>> bIn1(&bInfo1, bStorage1, 0);
   Brick<Dim<BDIM>, Dim<VFOLD>> bOut1(&bInfo1, bStorage1, bSize1);
 
+  // Remember array is <STRIDE> which is 288, brick is of STRIDEG=272, but notice here they only copy 272 size elements from array.
+  // which means a portion of array is copied.
   copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr1, grid_ptr1, bIn1);
   // Write brick data into file.
   if (arg_handler1.write_grid_with_ghostzone_into_file){
@@ -392,6 +395,9 @@ void d3pt7() {
   } else{
     std::cout << "\n Skipped reading brick2 data from file";
   }
+    std::string filename = "brick_data_read_written_check.txt";
+    write_brick_into_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2, grid_ptr2, bIn2, filename);
+
   auto brick_func2 = [&grid2, &bIn2, &bOut2]() -> void {
     _PARFOR
     for (long tk = GB; tk < STRIDEB - GB; ++tk)
@@ -434,7 +440,7 @@ void d3pt7() {
   else
     std::cout << "\nVerification results match numerical (bout1, bOut2)\n";  
   
-  // print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
+  print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
 
 }
 

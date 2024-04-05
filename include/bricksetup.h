@@ -87,9 +87,9 @@ BrickInfo<dims> init_grid(unsigned *&grid_ptr, const std::vector<long> &dimlist)
   // else option is not specified use from towan's synthetic data.
   // if option given to print/dump data - dump into file.
   fill_data_in_grid_default_way(grid_ptr, size);
-  // print_data_in_grid_default_way(grid_ptr, size, "Printing after Towan");
-  dump_data_from_grid_into_outputfile(grid_ptr, size, "output_grid_data_dmp.txt");
-  fill_data_in_grid_from_inputfile(grid_ptr, size, "output_grid_data_dmp.txt");
+  // // print_data_in_grid_default_way(grid_ptr, size, "Printing after Towan");
+  // dump_data_from_grid_into_outputfile(grid_ptr, size, "output_grid_data_dmp.txt");
+  // fill_data_in_grid_from_inputfile(grid_ptr, size, "output_grid_data_dmp.txt");
   // print_data_in_grid_default_way(grid_ptr, size, "Printing after my read from file");
 
   BrickInfo<dims> bInfo(size);
@@ -111,16 +111,16 @@ BrickInfo<dims> init_grid(unsigned *&grid_ptr, const std::vector<long> &dimlist,
   // allocate space and fill the grid_ptr reference.
   grid_ptr = (unsigned *) malloc(size * sizeof(unsigned));
 
-  // changes
-  if (read_from_file){
-    fill_data_in_grid_from_inputfile(grid_ptr, size, "grid_contents.txt");
-  } else{
-    // towan's synthetic data.
-    fill_data_in_grid_default_way(grid_ptr, size);
-  }
-  if (write_into_file){
-    dump_data_from_grid_into_outputfile(grid_ptr, size, "grid_contents.txt");
-  }
+  // // changes
+  // if (read_from_file){
+  //   fill_data_in_grid_from_inputfile(grid_ptr, size, "grid_contents.txt");
+  // } else{
+  //   // towan's synthetic data.
+  //   fill_data_in_grid_default_way(grid_ptr, size);
+  // }
+  // if (write_into_file){
+  //   dump_data_from_grid_into_outputfile(grid_ptr, size, "grid_contents.txt");
+  // }
 
   // print_data_in_grid_default_way(grid_ptr, size, "Printing after Towan");
   // dump_data_from_grid_into_outputfile(grid_ptr, size, "output_grid_data_dmp.txt");
@@ -361,12 +361,19 @@ inline void
 write_brick_into_file_verify(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
             bElem *arr, unsigned *grid_ptr, T &brick, std::string &filename) {
   std::ofstream outfile(filename);
-  auto f = [&](bElem &brick, bElem *arr) -> void {
-    outfile << brick;
+ if (!outfile.is_open()) {
+      std::cerr << "Unable to open file for writing the data into." << std::endl;
+      return;
+  }
+
+  // brick2 is just dummy.
+  auto f = [&](bElem &brick1, bElem &belem2) -> void {
+    outfile << brick1;
     outfile << std::endl;
   };
 
-  iter_grid<dims>(dimlist, padding, ghost, arr, grid_ptr, brick, f);
+  iter_grid_verify<dims>(dimlist, padding, ghost, grid_ptr, brick, grid_ptr, brick, f);
+  std::cout << "\n Written " << filename; 
   outfile.close();
 }
 
@@ -399,14 +406,15 @@ read_brick_from_file_verify(const std::vector<long> &dimlist, const std::vector<
         return;
     }  
 
-  auto f = [&](bElem &brick, bElem *arr) -> void {
-    if (!(infile >> brick)) {
+  auto f = [&](bElem &brick1, bElem &brick2) -> void {
+    if (!(infile >> brick1)) {
       std::cerr << "Error reading data from file "<< filename << std::endl;
       exit(1);
     }   
   };
 
-  iter_grid<dims>(dimlist, padding, ghost, arr, grid_ptr, brick, f);
+  iter_grid_verify<dims>(dimlist, padding, ghost, grid_ptr, brick, grid_ptr, brick, f);
+  std::cout << "\n Read " << filename; 
   infile.close();
 }
 
