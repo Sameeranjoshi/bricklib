@@ -223,7 +223,7 @@ print_both_Bricks_verify(const std::vector<long> &dimlist, const std::vector<lon
     unsigned *grid_ptr1, T1 &brick1, unsigned *grid_ptr2, T2 &brick2) {
   bool ret = true;
   auto f = [&ret](bElem brick1, bElem brick2) -> void {
-    std::cout << brick1 << " - " << brick2 << std::endl;
+    std::cout << std::fixed << std::setprecision(15) << brick1 << " - " << brick2 << std::endl;
   };
 
   iter_grid_verify<dims>(dimlist, padding, ghost, grid_ptr1, brick1, grid_ptr2, brick2, f);

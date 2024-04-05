@@ -76,10 +76,10 @@ void debug_global_args(global_args *handler){
   std::cout << handler->read_grid_with_ghostzone_from_file << std::endl;
 }
 
-void write_coeff_into_file(bElem *coeff){
+void write_coeff_into_file(bElem *coeff, std::string &filename){
     
     // Open a file for writing
-    std::string filename="coefficients.txt";
+    
     std::ofstream outfile(filename);
 
     // Check if file opened successfully
@@ -97,11 +97,11 @@ void write_coeff_into_file(bElem *coeff){
     std::cout << "\n Written " << filename;
 }
 
-void read_coeff_from_file(bElem *coeff) {
+void read_coeff_from_file(bElem *coeff, std::string &filename) {
     std::vector<bElem> coefficients;
 
     // Open the file for reading
-    std::string filename = "coefficients.txt";
+    
     std::ifstream infile(filename);
 
     // Check if the file opened successfully
@@ -123,7 +123,7 @@ void read_coeff_from_file(bElem *coeff) {
 
 }
 
-void handle_coefficient_data(bElem *coeff, global_args *handler){
+void handle_coefficient_data(bElem *coeff, global_args *handler, std::string &filename){
   
   std::random_device r;
   std::mt19937_64 mt(r());
@@ -131,7 +131,7 @@ void handle_coefficient_data(bElem *coeff, global_args *handler){
 
   // reading
   if (handler->read_coeff_from_file){
-    read_coeff_from_file(coeff);
+    read_coeff_from_file(coeff, filename);
   } else{
     // Randomly initialize coefficient, Towan's way of initialization.
     for (int i = 0; i < 129; ++i)
@@ -139,7 +139,7 @@ void handle_coefficient_data(bElem *coeff, global_args *handler){
   }
   // writing
   if (handler->write_coeff_into_file){
-    write_coeff_into_file(coeff);
+    write_coeff_into_file(coeff, filename);
   }
 
 }
@@ -302,7 +302,8 @@ void d3pt7() {
   arg_handler1.write_grid_with_ghostzone_into_file = 1;
   arg_handler1.read_grid_with_ghostzone_from_file = 0;  
   // handle coefficients
-  handle_coefficient_data(coeff1, &arg_handler1);
+  std::string filename_coeff_original = "coeff_original.txt";
+  handle_coefficient_data(coeff1, &arg_handler1, filename_coeff_original);
   // Run once and collect data.  
 
 // #######################################
@@ -327,7 +328,7 @@ void d3pt7() {
   copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr1, grid_ptr1, bIn1);
   // Write brick data into file.
   if (arg_handler1.write_grid_with_ghostzone_into_file){
-    std::string filename = "brick_data_original.txt";
+    std::string filename = "brick_original.txt";
     write_brick_into_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr1, grid_ptr1, bIn1, filename);
   } else{
     std::cout << "\n Skipped writing brick1 data into file";
@@ -349,15 +350,6 @@ void d3pt7() {
               }
         }
   };
-// auto brick_func_trans = [&grid, &bIn, &bOut]() -> void {
-  //   _PARFOR
-  //   for (long tk = GB; tk < STRIDEB - GB; ++tk)
-  //     for (long tj = GB; tj < STRIDEB - GB; ++tj)
-  //       for (long ti = GB; ti < STRIDEB - GB; ++ti) {
-  //         unsigned b = grid[tk][tj][ti];
-  //         brick("7pt.py", VSVEC, (BDIM), (VFOLD), b);
-  //       }
-  // };
 
   std::cout << "\n Running - d3pt7 Original" << std::endl;
   brick_func1();
@@ -370,7 +362,8 @@ void d3pt7() {
   arg_handler2.write_grid_with_ghostzone_into_file = 0;
   arg_handler2.read_grid_with_ghostzone_from_file = 1;  
   // handle coefficients
-  handle_coefficient_data(coeff2, &arg_handler2);
+  std::string filename_coeff_CDC = "coeff_original.txt";
+  handle_coefficient_data(coeff2, &arg_handler2, filename_coeff_CDC);
   // Run once and collect data.
 // ---------------------------------------
 
@@ -390,13 +383,13 @@ void d3pt7() {
   // copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2 , grid_ptr2, bIn2);
  // Write brick data into file.
   if (arg_handler2.read_grid_with_ghostzone_from_file){
-    std::string filename = "brick_data_original.txt"; // should be CDC brick at some point.
+    std::string filename = "brick_original.txt"; // should be CDC brick at some point.
     read_brick_from_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2, grid_ptr2, bIn2, filename);
   } else{
     std::cout << "\n Skipped reading brick2 data from file";
   }
-    std::string filename = "brick_data_read_written_check.txt";
-    write_brick_into_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2, grid_ptr2, bIn2, filename);
+    // std::string filename = "brick_data_read_written_check.txt";
+    // write_brick_into_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2, grid_ptr2, bIn2, filename);
 
   auto brick_func2 = [&grid2, &bIn2, &bOut2]() -> void {
     _PARFOR
@@ -426,22 +419,23 @@ void d3pt7() {
 
   std::cout << "\n Running - d3pt7 CDC version" << std::endl;
   brick_func2();
-  // brick_func_trans2();
+
 
 // #######################################
   std::cout << "\n Running - Verification \n";
- if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
+  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
     std::cout << "\n Floating point verification mismatched (bOut1, bOut2)\n";
   else
     std::cout << "\n Floating point verification matched (bout1, bOut2)\n";  
 
   // B1 - must be original
   // B2 - must be CDC
- if (!verifyBrick_numerical<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
+  if (!verifyBrick_numerical<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
     std::cout << "\n Numerical verification mismatched (bOut1, bOut2)\n";
   else
     std::cout << "\n Numerical vcerification match (bout1, bOut2)\n";  
   
+  // DEBUG
   // print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
 
 }
