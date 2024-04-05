@@ -170,8 +170,8 @@ verifyBrick_numerical(const std::vector<long> &dimlist, const std::vector<long> 
     }
   }
 
-std::cout << "Out of total " << brick1.bInfo->nbricks << " bricks "
-          << "SDD0= " << k0_l
+std::cout << "\n\n Out of total " << brick1.bInfo->nbricks << " bricks "
+          << " SDD0= " << k0_l
           << " SDD1= " << k1_l
           << " SDD2= " << k2_l
           << " SDD3= " << k3_l

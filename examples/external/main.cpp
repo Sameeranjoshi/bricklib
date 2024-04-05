@@ -9,6 +9,7 @@
 #include "brickverify.h"
 #include <string.h>
 #include <utility>
+#include <cstdlib>
 
 // Setting for X86 with at least AVX2 support
 #include <immintrin.h>
@@ -290,6 +291,10 @@ bElem *coeff1;
 bElem *coeff2;
 
 void d3pt7() {
+     std::string filename_brick_original = "brick_original.txt";
+    std::string filename_brick_CDC = "brick_CDC.txt"; // should be CDC brick at some point.
+    std::string filename_coeff_original = "coeff_original.txt";
+    std::string filename_coeff_CDC = "coeff_CDC.txt";
   // arg_handler is a global struct containing various flags.
   global_args arg_handler1 = {0};
   global_args arg_handler2 = {0};
@@ -302,7 +307,7 @@ void d3pt7() {
   arg_handler1.write_grid_with_ghostzone_into_file = 1;
   arg_handler1.read_grid_with_ghostzone_from_file = 0;  
   // handle coefficients
-  std::string filename_coeff_original = "coeff_original.txt";
+  
   handle_coefficient_data(coeff1, &arg_handler1, filename_coeff_original);
   // Run once and collect data.  
 
@@ -328,8 +333,8 @@ void d3pt7() {
   copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr1, grid_ptr1, bIn1);
   // Write brick data into file.
   if (arg_handler1.write_grid_with_ghostzone_into_file){
-    std::string filename = "brick_original.txt";
-    write_brick_into_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr1, grid_ptr1, bIn1, filename);
+ 
+    write_brick_into_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr1, grid_ptr1, bIn1, filename_brick_original);
   } else{
     std::cout << "\n Skipped writing brick1 data into file";
   }
@@ -355,6 +360,14 @@ void d3pt7() {
   brick_func1();
 // #######################################
 //CRUSHER POINT
+  // input files.
+  std::cout << "\n \t Running CRUSHER ";
+  std::string python_output = "python_output.txt";
+  std::string command = "python3 ../python-wrapper/runner.py " + filename_coeff_original + " " + filename_brick_original + " > " + python_output + " 2>&1";
+  std::cout << "\n " << command << "\n";
+  // system("python ../python-wrapper/runner.py");
+  system(command.c_str());
+  
 // #######################################
   // handle_argument_parsing(argc, argv, &arg_handler);
   arg_handler2.write_coeff_into_file = 0;
@@ -362,7 +375,7 @@ void d3pt7() {
   arg_handler2.write_grid_with_ghostzone_into_file = 0;
   arg_handler2.read_grid_with_ghostzone_from_file = 1;  
   // handle coefficients
-  std::string filename_coeff_CDC = "coeff_original.txt";
+  
   handle_coefficient_data(coeff2, &arg_handler2, filename_coeff_CDC);
   // Run once and collect data.
 // ---------------------------------------
@@ -383,8 +396,8 @@ void d3pt7() {
   // copyToBrick<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2 , grid_ptr2, bIn2);
  // Write brick data into file.
   if (arg_handler2.read_grid_with_ghostzone_from_file){
-    std::string filename = "brick_original.txt"; // should be CDC brick at some point.
-    read_brick_from_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2, grid_ptr2, bIn2, filename);
+    
+    read_brick_from_file_verify<3>({STRIDEG, STRIDEG, STRIDEG}, {PADDING, PADDING, PADDING}, {0, 0, 0}, in_ptr2, grid_ptr2, bIn2, filename_brick_CDC);
   } else{
     std::cout << "\n Skipped reading brick2 data from file";
   }
@@ -422,18 +435,18 @@ void d3pt7() {
 
 
 // #######################################
-  std::cout << "\n Running - Verification \n";
+  std::cout << "\n\t Running VERIFICATION \n";
   if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
-    std::cout << "\n Floating point verification mismatched (bOut1, bOut2)\n";
+    std::cout << "\n 1). Floating point verification mismatched (bOut1, bOut2)";
   else
-    std::cout << "\n Floating point verification matched (bout1, bOut2)\n";  
+    std::cout << "\n 1). Floating point verification matched (bout1, bOut2)";  
 
   // B1 - must be original
   // B2 - must be CDC
   if (!verifyBrick_numerical<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
-    std::cout << "\n Numerical verification mismatched (bOut1, bOut2)\n";
+    std::cout << "\n 2). Numerical verification mismatched (bOut1, bOut2)\n";
   else
-    std::cout << "\n Numerical vcerification match (bout1, bOut2)\n";  
+    std::cout << "\n 2). Numerical vcerification match (bout1, bOut2)\n";  
   
   // DEBUG
   // print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
