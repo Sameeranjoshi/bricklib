@@ -16,8 +16,8 @@
 #define VFOLD 2,2
 
 // Domain size
-#define N 256
-#define TILE 8
+#define N 4
+#define TILE 1
 
 #define GZ TILE
 #define PADDING 8

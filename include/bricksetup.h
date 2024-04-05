@@ -110,7 +110,9 @@ BrickInfo<dims> init_grid(unsigned *&grid_ptr, const std::vector<long> &dimlist,
   }
   // allocate space and fill the grid_ptr reference.
   grid_ptr = (unsigned *) malloc(size * sizeof(unsigned));
-
+  
+  
+  fill_data_in_grid_default_way(grid_ptr, size);
   // // changes
   // if (read_from_file){
   //   fill_data_in_grid_from_inputfile(grid_ptr, size, "grid_contents.txt");
