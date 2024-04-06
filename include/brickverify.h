@@ -39,10 +39,18 @@ inline bool
 verifyBrick(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
     unsigned *grid_ptr1, T1 &brick1, unsigned *grid_ptr2, T2 &brick2) {
   bool ret = true;
-  auto f = [&ret](bElem brick1, bElem brick2) -> void {
+  int cnt = 0;
+  int cnt_local=0;
+  auto f = [&ret, &cnt_local](bElem brick1, bElem brick2) -> void {
     double diff = std::abs(brick1 - brick2);
     bool r = (diff < BRICK_TOLERANCE) || (diff < (std::abs(brick1) + std::abs(brick2)) * BRICK_TOLERANCE);
     verifyBrick_b = (verifyBrick_b && r);
+    if (r == false){
+      cnt_local++;
+      std::cout << "\n" << std::fixed << std::setprecision(15) << brick1 << " - " << brick2 << "\n";
+      double diff = std::abs(brick1 - brick2); 
+      std::cout << "\n diff= " << diff << " tolerance= "<< BRICK_TOLERANCE << "\n";
+    }
   };
 
 #pragma omp parallel default(none)
@@ -51,14 +59,18 @@ verifyBrick(const std::vector<long> &dimlist, const std::vector<long> &padding, 
   }
   iter_grid_verify<dims>(dimlist, padding, ghost, grid_ptr1, brick1, grid_ptr2, brick2, f);
 
-#pragma omp parallel default(none) shared(ret)
+#pragma omp parallel default(none) shared(ret, cnt)
   {
 #pragma omp critical
     {
+      if(verifyBrick_b == false){
+        cnt++;
+      }
       ret = ret && verifyBrick_b;
     }
   }
-
+  std::cout << "\n Cnt of false = " << cnt;
+  std::cout << "\n CNT local = " << cnt_local;
   return ret;
 }
 
@@ -223,7 +235,9 @@ print_both_Bricks_verify(const std::vector<long> &dimlist, const std::vector<lon
     unsigned *grid_ptr1, T1 &brick1, unsigned *grid_ptr2, T2 &brick2) {
   bool ret = true;
   auto f = [&ret](bElem brick1, bElem brick2) -> void {
-    std::cout << std::fixed << std::setprecision(15) << brick1 << " - " << brick2 << std::endl;
+      std::cout << "\n" << std::fixed << std::setprecision(15) << brick1 << " - " << brick2 ;
+      double diff = std::abs(brick1 - brick2); 
+      std::cout << "\n diff= " << diff << " tolerance= "<< BRICK_TOLERANCE << "";    
   };
 
   iter_grid_verify<dims>(dimlist, padding, ghost, grid_ptr1, brick1, grid_ptr2, brick2, f);

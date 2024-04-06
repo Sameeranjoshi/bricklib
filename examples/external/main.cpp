@@ -420,6 +420,18 @@ void d3pt7() {
 
 
 // #######################################
+  if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2))
+    std::cout << "\n 1). Floating point verification mismatched (bOut1, bOut2)";
+  else
+    std::cout << "\n 1). Floating point verification matched (bout1, bOut2)";  
+
+  // B1 - must be original
+  // B2 - must be CDC
+  if (!verifyBrick_numerical<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2))
+    std::cout << "\n 2). Numerical verification mismatched (bOut1, bOut2)\n";
+  else
+    std::cout << "\n 2). Numerical vcerification match (bout1, bOut2)\n";  
+
   std::cout << "\n\t Running VERIFICATION \n";
   if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
     std::cout << "\n 1). Floating point verification mismatched (bOut1, bOut2)";
