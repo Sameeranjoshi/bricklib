@@ -348,7 +348,9 @@ void d3pt7() {
   // input files.
   std::cout << "\n \t Running CRUSHER ";
   std::string python_output = "python_output.txt";
-  std::string command = "python3 ../python-wrapper/runner.py " + filename_coeff_original + " " + filename_brick_original + " > " + python_output + " 2>&1";
+  // std::string command = "python3 ../python-wrapper/runner.py " + filename_coeff_original + " " + filename_brick_original + " > " + python_output + " 2>&1";
+  // only copy outputs no crushing
+  std::string command = "cp " + filename_coeff_original + " " + filename_coeff_CDC + " && cp " + filename_brick_original + " " + filename_brick_CDC;
   std::cout << "\n " << command << "\n";
   // system("python ../python-wrapper/runner.py");
   system(command.c_str());
@@ -417,20 +419,21 @@ void d3pt7() {
 
   std::cout << "\n Running - d3pt7 CDC version" << std::endl;
   brick_func2();
+  
 
 
 // #######################################
   if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2))
-    std::cout << "\n 1). Floating point verification mismatched (bOut1, bOut2)";
+    std::cout << "\n 1). Floating point verification mismatched (bIn1, bIn2)";
   else
-    std::cout << "\n 1). Floating point verification matched (bout1, bOut2)";  
+    std::cout << "\n 1). Floating point verification matched (bIn1, bIn2)";  
 
   // B1 - must be original
   // B2 - must be CDC
   if (!verifyBrick_numerical<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2))
-    std::cout << "\n 2). Numerical verification mismatched (bOut1, bOut2)\n";
+    std::cout << "\n 2). Numerical verification mismatched (bIn1, bIn2)\n";
   else
-    std::cout << "\n 2). Numerical vcerification match (bout1, bOut2)\n";  
+    std::cout << "\n 2). Numerical vcerification match (bIn1, bIn2)\n";  
 
   std::cout << "\n\t Running VERIFICATION \n";
   if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
@@ -446,7 +449,9 @@ void d3pt7() {
     std::cout << "\n 2). Numerical vcerification match (bout1, bOut2)\n";  
   
   // DEBUG
-  // print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
+  print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2);
+  std::cout << "\n Above is input below is output";
+  print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
 
 }
 
