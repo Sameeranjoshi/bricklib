@@ -26,8 +26,11 @@ else ()
     endif ()
 endif ()
 
-VSTARGET(B7PT main.cpp main-out.cpp)
-add_executable(brick-7pt ${VSTARGET_B7PT_OUTPUT})
+# Turns off VS generator.
+# VSTARGET(B7PT main.cpp main-out.cpp)
+# add_executable(brick-7pt ${VSTARGET_B7PT_OUTPUT})
+
+add_executable(brick-7pt main.cpp)
 target_link_libraries(brick-7pt brickhelper)
 set_target_properties(brick-7pt
         PROPERTIES OUTPUT_NAME example)
