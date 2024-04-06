@@ -10,6 +10,7 @@
 #include <string.h>
 #include <utility>
 #include <cstdlib>
+#include <fstream>
 
 // Setting for X86 with at least AVX2 support
 #include <immintrin.h>
@@ -77,51 +78,35 @@ void debug_global_args(global_args *handler){
   std::cout << handler->read_grid_with_ghostzone_from_file << std::endl;
 }
 
-void write_coeff_into_file(bElem *coeff, std::string &filename){
-    
-    // Open a file for writing
-    
-    std::ofstream outfile(filename);
+void write_coeff_into_file(bElem *coeff, std::string &filename) {
+    // Open a file for writing in binary mode
+    std::ofstream outfile(filename, std::ios::binary);
 
     // Check if file opened successfully
     if (!outfile.is_open()) {
-        std::cerr << "Unable to open file" << filename << "for writing." << std::endl;
+        std::cerr << "Unable to open file " << filename << " for writing." << std::endl;
         exit(1);
     }
 
     // Write coefficients to the file
-    for (int i = 0; i < 129; ++i)
-        outfile << coeff[i] << std::endl;
-    
+    outfile.write(reinterpret_cast<const char*>(coeff), sizeof(bElem) * 129);
+
     // Close the file
     outfile.close();
-    std::cout << "\n Written " << filename;
+    std::cout << "\nWritten " << filename;
 }
 
 void read_coeff_from_file(bElem *coeff, std::string &filename) {
-    std::vector<bElem> coefficients;
-
-    // Open the file for reading
-    
-    std::ifstream infile(filename);
-
-    // Check if the file opened successfully
+    // Open the file for reading in binary mode
+    std::ifstream infile(filename, std::ios::binary);
     if (!infile.is_open()) {
         std::cerr << "Unable to open file " << filename << " for reading." << std::endl;
         exit(1);
     }
-
     // Read coefficients from the file
-    int i=0;
-    while (infile >> coeff[i]) {
-        i++;
-    }
-
-    // Close the file
+    infile.read(reinterpret_cast<char*>(coeff), sizeof(bElem) * 129);
     infile.close();
-
-    std::cout << "\n Read " << filename;
-
+    std::cout << "\nRead " << filename;
 }
 
 void handle_coefficient_data(bElem *coeff, global_args *handler, std::string &filename){
@@ -291,10 +276,10 @@ bElem *coeff1;
 bElem *coeff2;
 
 void d3pt7() {
-     std::string filename_brick_original = "brick_original.txt";
-    std::string filename_brick_CDC = "brick_CDC.txt"; // should be CDC brick at some point.
-    std::string filename_coeff_original = "coeff_original.txt";
-    std::string filename_coeff_CDC = "coeff_CDC.txt";
+     std::string filename_brick_original = "brick_original.bin";
+    std::string filename_brick_CDC = "brick_CDC.bin"; // should be CDC brick at some point.
+    std::string filename_coeff_original = "coeff_original.bin";
+    std::string filename_coeff_CDC = "coeff_CDC.bin";
   // arg_handler is a global struct containing various flags.
   global_args arg_handler1 = {0};
   global_args arg_handler2 = {0};

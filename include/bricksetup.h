@@ -362,7 +362,7 @@ template<unsigned dims, typename T>
 inline void
 write_brick_into_file_verify(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
             bElem *arr, unsigned *grid_ptr, T &brick, std::string &filename) {
-  std::ofstream outfile(filename);
+  std::ofstream outfile(filename, std::ios::binary);
  if (!outfile.is_open()) {
       std::cerr << "Unable to open file for writing the data into." << std::endl;
       return;
@@ -370,13 +370,14 @@ write_brick_into_file_verify(const std::vector<long> &dimlist, const std::vector
 
   // brick2 is just dummy.
   auto f = [&](bElem &brick1, bElem &belem2) -> void {
-    outfile << brick1;
-    outfile << std::endl;
+    outfile.write(reinterpret_cast<const char *>(&brick1), sizeof(bElem)*1);
+    // outfile << brick1;
+    // outfile << std::endl;
   };
 
   iter_grid_verify<dims>(dimlist, padding, ghost, grid_ptr, brick, grid_ptr, brick, f);
-  std::cout << "\n Written " << filename; 
   outfile.close();
+  std::cout << "\n Written " << filename; 
 }
 
 /**
@@ -402,22 +403,22 @@ template<unsigned dims, typename T>
 inline void
 read_brick_from_file_verify(const std::vector<long> &dimlist, const std::vector<long> &padding, const std::vector<long> &ghost,
             bElem *arr, unsigned *grid_ptr, T &brick, std::string &filename) {
-  std::ifstream infile(filename);
+  std::ifstream infile(filename, std::ios::binary);
     if (!infile.is_open()) {
         std::cerr << "Unable to open file " << filename  << "for reading data from." << std::endl;
         return;
     }  
 
   auto f = [&](bElem &brick1, bElem &brick2) -> void {
-    if (!(infile >> brick1)) {
+    if (!(infile.read(reinterpret_cast<char*>(&brick1), sizeof(bElem)*1))) {  
       std::cerr << "Error reading data from file "<< filename << std::endl;
       exit(1);
     }   
   };
 
   iter_grid_verify<dims>(dimlist, padding, ghost, grid_ptr, brick, grid_ptr, brick, f);
-  std::cout << "\n Read " << filename; 
   infile.close();
+  std::cout << "\n Read " << filename; 
 }
 
 
