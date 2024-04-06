@@ -1,0 +1,210 @@
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 59 SDD6= 5 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 63 SDD6= 1 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 57 SDD6= 7 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 61 SDD6= 3 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 58 SDD6= 6 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 58 SDD6= 3 SDD7= 3 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 60 SDD6= 4 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 57 SDD6= 5 SDD7= 2 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 60 SDD6= 3 SDD7= 1 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 57 SDD6= 6 SDD7= 1 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)

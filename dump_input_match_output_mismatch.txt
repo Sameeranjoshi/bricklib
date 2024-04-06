@@ -1,0 +1,34 @@
+[u1418973@kp326:bricklib]$ /uufs/chpc.utah.edu/common/home/u1418973/other/verify_gravel/bricklib/examples/external/build/example 
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+         Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 0 SDD5= 58 SDD6= 6 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical vcerification match (bout1, bOut2)
+
+         Running VERIFICATION 
+
+0.816935218478695 - 0.816933340164000
+
+ diff= 0.000001878314695 tolerance= 0.000001000000000
+
+ Cnt of false = 1
+ CNT local = 1
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 24 SDD5= 30 SDD6= 10 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)

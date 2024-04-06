@@ -1,0 +1,262 @@
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+1.422766080836366 - 1.422762971556000
+diff= 0.000003109280366 tolerance= 0.000001000000000
+ Cnt of false = 1
+ CNT local = 1
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 27 SDD5= 28 SDD6= 8 SDD7= 1 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+0.879109583743797 - 0.879111382064000
+diff= 0.000001798320203 tolerance= 0.000001000000000
+0.720623259287640 - 0.720624727996000
+diff= 0.000001468708360 tolerance= 0.000001000000000
+0.897304566567342 - 0.897306557584000
+diff= 0.000001991016658 tolerance= 0.000001000000000
+0.998179575784062 - 0.998181724132000
+diff= 0.000002148347937 tolerance= 0.000001000000000
+ Cnt of false = 1
+ CNT local = 4
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 27 SDD5= 31 SDD6= 6 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+0.937353941464286 - 0.937351426916000
+diff= 0.000002514548286 tolerance= 0.000001000000000
+1.450343112684405 - 1.450339889488000
+diff= 0.000003223196405 tolerance= 0.000001000000000
+ Cnt of false = 1
+ CNT local = 2
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 35 SDD5= 23 SDD6= 5 SDD7= 1 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+1.287946663339620 - 1.287949689380000
+diff= 0.000003026040380 tolerance= 0.000001000000000
+1.013823347336805 - 1.013825607128000
+diff= 0.000002259791195 tolerance= 0.000001000000000
+ Cnt of false = 1
+ CNT local = 2
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 30 SDD5= 30 SDD6= 3 SDD7= 1 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+1.105704090330605 - 1.105701808732000
+diff= 0.000002281598605 tolerance= 0.000001000000000
+1.339894282261463 - 1.339891568148000
+diff= 0.000002714113463 tolerance= 0.000001000000000
+1.187341445424823 - 1.187338765344000
+diff= 0.000002680080823 tolerance= 0.000001000000000
+0.813279301180610 - 0.813277369376000
+diff= 0.000001931804610 tolerance= 0.000001000000000
+ Cnt of false = 1
+ CNT local = 4
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 31 SDD5= 27 SDD6= 5 SDD7= 0 SDD8= 1 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+1.067121627361039 - 1.067119243116000
+diff= 0.000002384245039 tolerance= 0.000001000000000
+ Cnt of false = 1
+ CNT local = 1
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 14 SDD5= 43 SDD6= 6 SDD7= 1 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 21 SDD5= 34 SDD6= 9 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+ Cnt of false = 0
+ CNT local = 0
+ 1). Floating point verification matched (bout1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 19 SDD5= 38 SDD6= 6 SDD7= 1 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+1.256353854403118 - 1.256357373488000
+diff= 0.000003519084881 tolerance= 0.000001000000000
+1.697739672306284 - 1.697743239216000
+diff= 0.000003566909716 tolerance= 0.000001000000000
+ Cnt of false = 1
+ CNT local = 2
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 22 SDD5= 37 SDD6= 5 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
+
+Written coeff_original.bin
+ Written brick_original.bin
+ Running - d3pt7 Original
+
+ 	 Running CRUSHER 
+ python3 ../python-wrapper/runner.py coeff_original.bin brick_original.bin > python_output.txt 2>&1
+
+Read coeff_CDC.bin
+ Read brick_CDC.bin
+ Running - d3pt7 CDC version
+
+	 Running VERIFICATION 
+
+0.586164567780403 - 0.586163192080000
+diff= 0.000001375700403 tolerance= 0.000001000000000
+1.577049264320992 - 1.577045479108000
+diff= 0.000003785212992 tolerance= 0.000001000000000
+1.195543965104161 - 1.195541475100000
+diff= 0.000002490004161 tolerance= 0.000001000000000
+1.112200980460420 - 1.112198657240000
+diff= 0.000002323220420 tolerance= 0.000001000000000
+0.874269698048254 - 0.874267656056000
+diff= 0.000002041992254 tolerance= 0.000001000000000
+1.044718318605206 - 1.044716129448000
+diff= 0.000002189157206 tolerance= 0.000001000000000
+0.684913487359764 - 0.684911872632000
+diff= 0.000001614727764 tolerance= 0.000001000000000
+0.928877597685437 - 0.928875481764000
+diff= 0.000002115921437 tolerance= 0.000001000000000
+0.690175622413480 - 0.690173945288000
+diff= 0.000001677125480 tolerance= 0.000001000000000
+1.141228051885833 - 1.141225258384000
+diff= 0.000002793501833 tolerance= 0.000001000000000
+ Cnt of false = 1
+ CNT local = 10
+ 1). Floating point verification mismatched (bOut1, bOut2)
+
+ Out of total 216 bricks  SDD0= 0 SDD1= 0 SDD2= 0 SDD3= 0 SDD4= 45 SDD5= 17 SDD6= 2 SDD7= 0 SDD8= 0 SDDi= 0
+
+ 2). Numerical verification mismatched (bOut1, bOut2)
