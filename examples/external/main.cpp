@@ -348,9 +348,9 @@ void d3pt7() {
   // input files.
   std::cout << "\n \t Running CRUSHER ";
   std::string python_output = "python_output.txt";
-  // std::string command = "python3 ../python-wrapper/runner.py " + filename_coeff_original + " " + filename_brick_original + " > " + python_output + " 2>&1";
+  std::string command = "python3 ../python-wrapper/runner.py " + filename_coeff_original + " " + filename_brick_original + " > " + python_output + " 2>&1";
   // only copy outputs no crushing
-  std::string command = "cp " + filename_coeff_original + " " + filename_coeff_CDC + " && cp " + filename_brick_original + " " + filename_brick_CDC;
+  // std::string command = "cp " + filename_coeff_original + " " + filename_coeff_CDC + " && cp " + filename_brick_original + " " + filename_brick_CDC;
   std::cout << "\n " << command << "\n";
   // system("python ../python-wrapper/runner.py");
   system(command.c_str());
@@ -450,7 +450,9 @@ void d3pt7() {
   
   // DEBUG
   print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2);
+  std::cout << "\n\n";
   std::cout << "\n Above is input below is output";
+  std::cout << "\n\n";
   print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
 
 }
