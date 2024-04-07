@@ -36,3 +36,4 @@ install
 
 # ignore extras
 coefficients.txt
+*.bin
