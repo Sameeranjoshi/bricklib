@@ -423,6 +423,7 @@ void d3pt7() {
 
 
 // #######################################
+  std::cout << "\n\t Running VERIFICATION on bIn\n";
   if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2))
     std::cout << "\n 1). Floating point verification mismatched (bIn1, bIn2)";
   else
@@ -435,7 +436,7 @@ void d3pt7() {
   else
     std::cout << "\n 2). Numerical vcerification match (bIn1, bIn2)\n";  
 
-  std::cout << "\n\t Running VERIFICATION \n";
+  std::cout << "\n\t Running VERIFICATION on bOut \n";
   if (!verifyBrick<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2))
     std::cout << "\n 1). Floating point verification mismatched (bOut1, bOut2)";
   else
@@ -449,11 +450,11 @@ void d3pt7() {
     std::cout << "\n 2). Numerical vcerification match (bout1, bOut2)\n";  
   
   // DEBUG
-  print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2);
-  std::cout << "\n\n";
-  std::cout << "\n Above is input below is output";
-  std::cout << "\n\n";
-  print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
+  // print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bIn1, grid_ptr2, bIn2);
+  // std::cout << "\n\n";
+  // std::cout << "\n Above is input below is output";
+  // std::cout << "\n\n";
+  // print_both_Bricks_verify<3>({N, N, N}, {PADDING,PADDING,PADDING}, {GZ, GZ, GZ}, grid_ptr1, bOut1, grid_ptr2, bOut2);
 
 }
 
