@@ -34,8 +34,21 @@ with open(output_filename, "w") as output_file:
     output_file.write("Bricks,SDD0,SDD1,SDD2,SDD3,SDD4,SDD5,SDD6,SDD7,SDD8,SDD9,SDD10,SDD11,SDD12,SDD13,SDD14,SDD15\n")
     for values in input_sdd_values:
         output_file.write("216," + "".join(values) + "\n")
+    output_file.write("\nBout\n")
     for values1 in output_sdd_values:
         output_file.write("216," + "".join(values1) + "\n")   
 
 print(f"CSV {output_filename} created successfully.")
 
+
+# Excel generators
+
+import pandas as pd
+
+# Read the CSV file into a pandas DataFrame
+df = pd.read_csv("SDD_outputs.csv")
+
+# Write the DataFrame to the Excel file directly
+df.to_excel("SDD_outputs.xlsx", index=False)
+
+print("Excel SDD_outputs.xlsx created successfully.")
