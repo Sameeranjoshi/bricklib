@@ -47,9 +47,9 @@ verifyBrick(const std::vector<long> &dimlist, const std::vector<long> &padding, 
     verifyBrick_b = (verifyBrick_b && r);
     if (r == false){
       cnt_local++;
-      std::cout << "\n" << std::fixed << std::setprecision(15) << brick1 << " - " << brick2 << "\n";
+      // std::cout << "\n" << std::fixed << std::setprecision(15) << brick1 << " - " << brick2 << "\n";
       double diff = std::abs(brick1 - brick2); 
-      std::cout << "\n diff= " << diff << " tolerance= "<< BRICK_TOLERANCE << "\n";
+      // std::cout << "\n diff= " << diff << " tolerance= "<< BRICK_TOLERANCE << "\n";
     }
   };
 
